@@ -16,137 +16,28 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Bubblewrap
+        run: npm install -g @bubblewrap/cli@latest
+
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          cmdline-tools-version: '11076708'
 
-      - name: Create TWA Android project
-        run: |
-          mkdir -p twa/app/src/main/res/values
-          mkdir -p twa/app/src/main/res/xml
-          mkdir -p twa/app/src/main/res/mipmap-xxxhdpi
-          mkdir -p twa/gradle/wrapper
+      - name: Accept SDK licenses
+        run: yes | sdkmanager --licenses || true
 
-          # Copy icon
-          cp icon-512.png twa/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
-
-          # settings.gradle
-          cat > twa/settings.gradle << 'GRADLE'
-          rootProject.name = "MistakeCards"
-          include ':app'
-          GRADLE
-
-          # build.gradle (root)
-          cat > twa/build.gradle << 'GRADLE'
-          buildscript {
-              repositories { google(); mavenCentral() }
-              dependencies {
-                  classpath 'com.android.tools.build:gradle:8.2.0'
-              }
-          }
-          allprojects {
-              repositories { google(); mavenCentral() }
-          }
-          GRADLE
-
-          # gradle wrapper properties
-          cat > twa/gradle/wrapper/gradle-wrapper.properties << 'GRADLE'
-          distributionBase=GRADLE_USER_HOME
-          distributionPath=wrapper/dists
-          distributionUrl=https\://services.gradle.org/distributions/gradle-8.2-bin.zip
-          zipStoreBase=GRADLE_USER_HOME
-          zipStorePath=wrapper/dists
-          GRADLE
-
-          # Download gradle wrapper
-          cd twa
-          gradle wrapper --gradle-version=8.2 2>/dev/null || \
-            curl -sL https://services.gradle.org/distributions/gradle-8.2-bin.zip -o /tmp/gradle.zip
-
-          # app/build.gradle
-          cat > twa/app/build.gradle << 'GRADLE'
-          plugins {
-              id 'com.android.application'
-          }
-          android {
-              namespace 'com.orca.mistakecards'
-              compileSdk 34
-              defaultConfig {
-                  applicationId 'com.orca.mistakecards'
-                  minSdk 21
-                  targetSdk 34
-                  versionCode 1
-                  versionName '1.0'
-              }
-              buildTypes {
-                  release {
-                      minifyEnabled false
-                  }
-              }
-              compileOptions {
-                  sourceCompatibility JavaVersion.VERSION_17
-                  targetCompatibility JavaVersion.VERSION_17
-              }
-          }
-          dependencies {
-              implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.5.0'
-          }
-          GRADLE
-
-          # AndroidManifest.xml
-          cat > twa/app/src/main/AndroidManifest.xml << 'XML'
-          <?xml version="1.0" encoding="utf-8"?>
-          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-              <application
-                  android:label="错题本"
-                  android:icon="@mipmap/ic_launcher"
-                  android:theme="@style/Theme.AppCompat.NoActionBar">
-                  <activity
-                      android:name="com.google.androidbrowserhelper.trusted.LauncherActivity"
-                      android:exported="true">
-                      <meta-data
-                          android:name="android.support.customtabs.trusted.DEFAULT_URL"
-                          android:value="https://mistake-cards-mq9yzbomq-mayrains-projects.vercel.app" />
-                      <meta-data
-                          android:name="android.support.customtabs.trusted.STATUS_BAR_COLOR"
-                          android:value="@color/colorPrimary" />
-                      <meta-data
-                          android:name="android.support.customtabs.trusted.SPLASH_IMAGE_DRAWABLE"
-                          android:value="@mipmap/ic_launcher"/>
-                      <meta-data
-                          android:name="android.support.customtabs.trusted.SPLASH_SCREEN_BACKGROUND_COLOR"
-                          android:value="@color/backgroundColor"/>
-                      <meta-data
-                          android:name="android.support.customtabs.trusted.SPLASH_SCREEN_FADE_OUT_DURATION"
-                          android:value="300"/>
-                      <intent-filter>
-                          <action android:name="android.intent.action.MAIN" />
-                          <category android:name="android.intent.category.LAUNCHER" />
-                      </intent-filter>
-                      <intent-filter android:autoVerify="true">
-                          <action android:name="android.intent.action.VIEW"/>
-                          <category android:name="android.intent.category.DEFAULT"/>
-                          <category android:name="android.intent.category.BROWSABLE"/>
-                          <data android:scheme="https"
-                              android:host="mistake-cards-mq9yzbomq-mayrains-projects.vercel.app"/>
-                      </intent-filter>
-                  </activity>
-              </application>
-          </manifest>
-          XML
-
-          # colors.xml
-          cat > twa/app/src/main/res/values/colors.xml << 'XML'
-          <?xml version="1.0" encoding="utf-8"?>
-          <resources>
-              <color name="colorPrimary">#1a1a2e</color>
-              <color name="backgroundColor">#0f0f1a</color>
-          </resources>
-          XML
+      - name: Install SDK packages
+        run: sdkmanager "platforms;android-34" "build-tools;34.0.0"
 
       - name: Generate Keystore
         run: |
           keytool -genkeypair -v \
-            -keystore twa/release.keystore \
+            -keystore release.keystore \
             -alias android \
             -keyalg RSA -keysize 2048 \
             -validity 10000 \
@@ -154,26 +45,29 @@ jobs:
             -keypass android123 \
             -dname "CN=Orca, OU=AHU, O=AHU, L=Hefei, S=Anhui, C=CN"
 
-      - name: Build APK
+      - name: Init TWA project
+        run: |
+          bubblewrap init \
+            --manifest "https://mistake-cards-mq9yzbomq-mayrains-projects.vercel.app/manifest.json" \
+            --directory ./twa \
+            <<< $'android123\nandroid123\ncom.orca.mistakecards\n错题本\n错题本\n1\n1.0.0\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+        env:
+          BUBBLEWRAP_SKIP_UPDATE_CHECK: '1'
+
+      - name: Build with Bubblewrap
         run: |
           cd twa
-          chmod +x gradlew 2>/dev/null || true
-          ./gradlew assembleDebug --no-daemon
-
-      - name: Sign APK
-        run: |
-          $ANDROID_SDK_ROOT/build-tools/34.0.0/apksigner sign \
-            --ks twa/release.keystore \
-            --ks-key-alias android \
-            --ks-pass pass:android123 \
-            --key-pass pass:android123 \
-            --out twa/app/build/outputs/apk/debug/mistakecards.apk \
-            twa/app/build/outputs/apk/debug/app-debug.apk || true
-          ls twa/app/build/outputs/apk/debug/
+          bubblewrap build \
+            --skipPwaValidation \
+            <<< $'android123\nandroid123\n'
+        env:
+          BUBBLEWRAP_SKIP_UPDATE_CHECK: '1'
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: mistakecards-apk
-          path: twa/app/build/outputs/apk/debug/*.apk
+          path: |
+            twa/*.apk
+            twa/*.aab
           if-no-files-found: error
