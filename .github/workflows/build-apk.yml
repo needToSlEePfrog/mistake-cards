@@ -64,6 +64,11 @@ jobs:
           zipStorePath=wrapper/dists
           PROPS
 
+          cat > twa/gradle.properties << 'PROPS'
+          android.useAndroidX=true
+          android.enableJetifier=true
+          PROPS
+
           cat > twa/app/build.gradle << 'GRADLE'
           plugins {
               id 'com.android.application'
