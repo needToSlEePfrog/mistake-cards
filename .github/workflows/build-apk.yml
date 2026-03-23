@@ -5,6 +5,9 @@ on:
     branches: [main]
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -45,23 +48,72 @@ jobs:
             -keypass android123 \
             -dname "CN=Orca, OU=AHU, O=AHU, L=Hefei, S=Anhui, C=CN"
 
+      - name: Create TWA manifest
+        run: |
+          mkdir -p twa
+          cat > twa/twa-manifest.json << 'EOF'
+          {
+            "packageId": "com.orca.mistakecards",
+            "host": "mistake-cards-mq9yzbomq-mayrains-projects.vercel.app",
+            "name": "错题本",
+            "launcherName": "错题本",
+            "display": "standalone",
+            "themeColor": "#1a1a2e",
+            "navigationColor": "#1a1a2e",
+            "navigationColorDark": "#1a1a2e",
+            "navigationDividerColor": "#1a1a2e",
+            "navigationDividerColorDark": "#1a1a2e",
+            "backgroundColor": "#0f0f1a",
+            "enableNotifications": false,
+            "startUrl": "/",
+            "iconUrl": "https://mistake-cards-mq9yzbomq-mayrains-projects.vercel.app/icon-512.png",
+            "maskableIconUrl": "https://mistake-cards-mq9yzbomq-mayrains-projects.vercel.app/icon-512.png",
+            "monochromeIconUrl": "https://mistake-cards-mq9yzbomq-mayrains-projects.vercel.app/icon-512.png",
+            "shortcuts": [],
+            "appVersion": "1",
+            "appVersionName": "1.0.0",
+            "signingKey": {
+              "path": "../release.keystore",
+              "alias": "android"
+            },
+            "storePresence": {},
+            "bubblewrapVersion": "1.21.1",
+            "minSdkVersion": 21,
+            "targetSdkVersion": 34,
+            "orientation": "default",
+            "fullScopeUrl": "https://mistake-cards-mq9yzbomq-mayrains-projects.vercel.app",
+            "locationDelegation": {"enabled": false},
+            "googlePlayBilling": {"enabled": false},
+            "isChromeOSOnly": false,
+            "isMetaQuest": false,
+            "webManifestUrl": "https://mistake-cards-mq9yzbomq-mayrains-projects.vercel.app/manifest.json",
+            "generatorApp": "bubblewrap-cli",
+            "features": {},
+            "alphaDependencies": {"enabled": false},
+            "enableSiteSettingsShortcut": true,
+            "fallbackType": "customtabs",
+            "serviceWorkerEnabled": false,
+            "fingerprints": []
+          }
+          EOF
+
       - name: Init TWA project
         run: |
           bubblewrap init \
             --manifest "https://mistake-cards-mq9yzbomq-mayrains-projects.vercel.app/manifest.json" \
-            --directory ./twa \
-            <<< $'android123\nandroid123\ncom.orca.mistakecards\n错题本\n错题本\n1\n1.0.0\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+            --directory ./twa
         env:
           BUBBLEWRAP_SKIP_UPDATE_CHECK: '1'
+          BUBBLEWRAP_DISABLE_TELEMETRY: '1'
 
       - name: Build with Bubblewrap
         run: |
           cd twa
-          bubblewrap build \
-            --skipPwaValidation \
-            <<< $'android123\nandroid123\n'
+          bubblewrap build --skipPwaValidation
         env:
           BUBBLEWRAP_SKIP_UPDATE_CHECK: '1'
+          BUBBLEWRAP_KEYSTORE_PASSWORD: android123
+          BUBBLEWRAP_KEY_PASSWORD: android123
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
