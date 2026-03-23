@@ -30,6 +30,10 @@ jobs:
       - name: Install SDK packages
         run: sdkmanager "platforms;android-34" "build-tools;34.0.0"
 
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > release.keystore
+
       - name: Build TWA project files
         run: |
           mkdir -p twa/app/src/main/res/values
@@ -111,7 +115,7 @@ jobs:
                       android:exported="true">
                       <meta-data
                           android:name="android.support.customtabs.trusted.DEFAULT_URL"
-                          android:value="https://mistake-cards-mq9yzbomq-mayrains-projects.vercel.app" />
+                          android:value="https://mistake-cards.vercel.app" />
                       <meta-data
                           android:name="android.support.customtabs.trusted.STATUS_BAR_COLOR"
                           android:value="@color/colorPrimary" />
@@ -124,7 +128,7 @@ jobs:
                           <category android:name="android.intent.category.DEFAULT"/>
                           <category android:name="android.intent.category.BROWSABLE"/>
                           <data android:scheme="https"
-                              android:host="mistake-cards-mq9yzbomq-mayrains-projects.vercel.app"/>
+                              android:host="mistake-cards.vercel.app"/>
                       </intent-filter>
                   </activity>
               </application>
@@ -143,17 +147,6 @@ jobs:
           gradle wrapper --gradle-version=8.2
           chmod +x gradlew
 
-      - name: Generate Keystore
-        run: |
-          keytool -genkeypair -v \
-            -keystore twa/release.keystore \
-            -alias android \
-            -keyalg RSA -keysize 2048 \
-            -validity 10000 \
-            -storepass android123 \
-            -keypass android123 \
-            -dname "CN=Orca, OU=AHU, O=AHU, L=Hefei, S=Anhui, C=CN"
-
       - name: Build APK
         run: |
           cd twa
@@ -162,10 +155,10 @@ jobs:
       - name: Sign APK
         run: |
           $ANDROID_SDK_ROOT/build-tools/34.0.0/apksigner sign \
-            --ks twa/release.keystore \
+            --ks ../release.keystore \
             --ks-key-alias android \
-            --ks-pass pass:android123 \
-            --key-pass pass:android123 \
+            --ks-pass pass:${{ secrets.KEYSTORE_PASSWORD }} \
+            --key-pass pass:${{ secrets.KEYSTORE_PASSWORD }} \
             --out twa/mistakecards-signed.apk \
             twa/app/build/outputs/apk/release/app-release-unsigned.apk
 
