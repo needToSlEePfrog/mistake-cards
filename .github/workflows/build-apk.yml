@@ -36,8 +36,7 @@ jobs:
           mkdir -p twa/app/src/main/res/mipmap-xxxhdpi
           mkdir -p twa/gradle/wrapper
 
-          curl -sL "https://mistake-cards-mq9yzbomq-mayrains-projects.vercel.app/icon-512.png" \
-            -o twa/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+          cp icon-512.png twa/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
 
           cat > twa/settings.gradle << 'GRADLE'
           rootProject.name = "MistakeCards"
