@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.orca.mistakecards",
+      "sha256_cert_fingerprints": [
+        "3C:2A:2D:52:50:84:AC:BE:50:E9:29:91:2B:47:D5:AD:04:87:AC:34:73:57:44:10:58:57:C7:29:63:83:67:4B"
+      ]
+    }
+  }
+]
