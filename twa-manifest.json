@@ -1,6 +1,6 @@
 {
   "packageId": "com.orca.mistakecards",
-  "host": "mistake-cards-mq9yzbomq-mayrains-projects.vercel.app",
+  "host": "mistake-cards.vercel.app",
   "name": "错题本",
   "launcherName": "错题本",
   "display": "standalone",
@@ -9,8 +9,8 @@
   "navigationColor": "#1a1a2e",
   "backgroundColor": "#0f0f1a",
   "startUrl": "/",
-  "iconUrl": "https://mistake-cards-mq9yzbomq-mayrains-projects.vercel.app/icon-512.png",
-  "maskableIconUrl": "https://mistake-cards-mq9yzbomq-mayrains-projects.vercel.app/icon-512.png",
+  "iconUrl": "https://mistake-cards.vercel.app/icon-512.png",
+  "maskableIconUrl": "https://mistake-cards.vercel.app/icon-512.png",
   "shortcuts": [
     {
       "name": "信号与系统",
