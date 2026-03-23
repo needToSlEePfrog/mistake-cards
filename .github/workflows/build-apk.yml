@@ -19,13 +19,6 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install Bubblewrap
-        run: npm install -g @bubblewrap/cli@latest
-
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
         with:
@@ -37,10 +30,117 @@ jobs:
       - name: Install SDK packages
         run: sdkmanager "platforms;android-34" "build-tools;34.0.0"
 
+      - name: Build TWA project files
+        run: |
+          mkdir -p twa/app/src/main/res/values
+          mkdir -p twa/app/src/main/res/mipmap-xxxhdpi
+          mkdir -p twa/gradle/wrapper
+
+          curl -sL "https://mistake-cards-mq9yzbomq-mayrains-projects.vercel.app/icon-512.png" \
+            -o twa/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+
+          cat > twa/settings.gradle << 'GRADLE'
+          rootProject.name = "MistakeCards"
+          include ':app'
+          GRADLE
+
+          cat > twa/build.gradle << 'GRADLE'
+          buildscript {
+              repositories { google(); mavenCentral() }
+              dependencies {
+                  classpath 'com.android.tools.build:gradle:8.2.0'
+              }
+          }
+          allprojects {
+              repositories { google(); mavenCentral() }
+          }
+          GRADLE
+
+          cat > twa/gradle/wrapper/gradle-wrapper.properties << 'PROPS'
+          distributionBase=GRADLE_USER_HOME
+          distributionPath=wrapper/dists
+          distributionUrl=https\://services.gradle.org/distributions/gradle-8.2-bin.zip
+          zipStoreBase=GRADLE_USER_HOME
+          zipStorePath=wrapper/dists
+          PROPS
+
+          cat > twa/app/build.gradle << 'GRADLE'
+          plugins {
+              id 'com.android.application'
+          }
+          android {
+              namespace 'com.orca.mistakecards'
+              compileSdk 34
+              defaultConfig {
+                  applicationId 'com.orca.mistakecards'
+                  minSdk 21
+                  targetSdk 34
+                  versionCode 1
+                  versionName '1.0'
+              }
+              buildTypes {
+                  release {
+                      minifyEnabled false
+                  }
+              }
+              compileOptions {
+                  sourceCompatibility JavaVersion.VERSION_17
+                  targetCompatibility JavaVersion.VERSION_17
+              }
+          }
+          dependencies {
+              implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.5.0'
+          }
+          GRADLE
+
+          cat > twa/app/src/main/AndroidManifest.xml << 'XML'
+          <?xml version="1.0" encoding="utf-8"?>
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+              <application
+                  android:label="错题本"
+                  android:icon="@mipmap/ic_launcher"
+                  android:theme="@style/Theme.AppCompat.NoActionBar">
+                  <activity
+                      android:name="com.google.androidbrowserhelper.trusted.LauncherActivity"
+                      android:exported="true">
+                      <meta-data
+                          android:name="android.support.customtabs.trusted.DEFAULT_URL"
+                          android:value="https://mistake-cards-mq9yzbomq-mayrains-projects.vercel.app" />
+                      <meta-data
+                          android:name="android.support.customtabs.trusted.STATUS_BAR_COLOR"
+                          android:value="@color/colorPrimary" />
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN" />
+                          <category android:name="android.intent.category.LAUNCHER" />
+                      </intent-filter>
+                      <intent-filter android:autoVerify="true">
+                          <action android:name="android.intent.action.VIEW"/>
+                          <category android:name="android.intent.category.DEFAULT"/>
+                          <category android:name="android.intent.category.BROWSABLE"/>
+                          <data android:scheme="https"
+                              android:host="mistake-cards-mq9yzbomq-mayrains-projects.vercel.app"/>
+                      </intent-filter>
+                  </activity>
+              </application>
+          </manifest>
+          XML
+
+          cat > twa/app/src/main/res/values/colors.xml << 'XML'
+          <?xml version="1.0" encoding="utf-8"?>
+          <resources>
+              <color name="colorPrimary">#1a1a2e</color>
+              <color name="backgroundColor">#0f0f1a</color>
+          </resources>
+          XML
+
+          cd twa
+          gradle wrapper --gradle-version=8.2
+          chmod +x gradlew
+
       - name: Generate Keystore
         run: |
           keytool -genkeypair -v \
-            -keystore release.keystore \
+            -keystore twa/release.keystore \
             -alias android \
             -keyalg RSA -keysize 2048 \
             -validity 10000 \
@@ -48,78 +148,24 @@ jobs:
             -keypass android123 \
             -dname "CN=Orca, OU=AHU, O=AHU, L=Hefei, S=Anhui, C=CN"
 
-      - name: Create TWA manifest
-        run: |
-          mkdir -p twa
-          cat > twa/twa-manifest.json << 'EOF'
-          {
-            "packageId": "com.orca.mistakecards",
-            "host": "mistake-cards-mq9yzbomq-mayrains-projects.vercel.app",
-            "name": "错题本",
-            "launcherName": "错题本",
-            "display": "standalone",
-            "themeColor": "#1a1a2e",
-            "navigationColor": "#1a1a2e",
-            "navigationColorDark": "#1a1a2e",
-            "navigationDividerColor": "#1a1a2e",
-            "navigationDividerColorDark": "#1a1a2e",
-            "backgroundColor": "#0f0f1a",
-            "enableNotifications": false,
-            "startUrl": "/",
-            "iconUrl": "https://mistake-cards-mq9yzbomq-mayrains-projects.vercel.app/icon-512.png",
-            "maskableIconUrl": "https://mistake-cards-mq9yzbomq-mayrains-projects.vercel.app/icon-512.png",
-            "monochromeIconUrl": "https://mistake-cards-mq9yzbomq-mayrains-projects.vercel.app/icon-512.png",
-            "shortcuts": [],
-            "appVersion": "1",
-            "appVersionName": "1.0.0",
-            "signingKey": {
-              "path": "../release.keystore",
-              "alias": "android"
-            },
-            "storePresence": {},
-            "bubblewrapVersion": "1.21.1",
-            "minSdkVersion": 21,
-            "targetSdkVersion": 34,
-            "orientation": "default",
-            "fullScopeUrl": "https://mistake-cards-mq9yzbomq-mayrains-projects.vercel.app",
-            "locationDelegation": {"enabled": false},
-            "googlePlayBilling": {"enabled": false},
-            "isChromeOSOnly": false,
-            "isMetaQuest": false,
-            "webManifestUrl": "https://mistake-cards-mq9yzbomq-mayrains-projects.vercel.app/manifest.json",
-            "generatorApp": "bubblewrap-cli",
-            "features": {},
-            "alphaDependencies": {"enabled": false},
-            "enableSiteSettingsShortcut": true,
-            "fallbackType": "customtabs",
-            "serviceWorkerEnabled": false,
-            "fingerprints": []
-          }
-          EOF
-
-      - name: Init TWA project
-        run: |
-          bubblewrap init \
-            --manifest "https://mistake-cards-mq9yzbomq-mayrains-projects.vercel.app/manifest.json" \
-            --directory ./twa
-        env:
-          BUBBLEWRAP_SKIP_UPDATE_CHECK: '1'
-          BUBBLEWRAP_DISABLE_TELEMETRY: '1'
-
-      - name: Build with Bubblewrap
+      - name: Build APK
         run: |
           cd twa
-          bubblewrap build --skipPwaValidation
-        env:
-          BUBBLEWRAP_SKIP_UPDATE_CHECK: '1'
-          BUBBLEWRAP_KEYSTORE_PASSWORD: android123
-          BUBBLEWRAP_KEY_PASSWORD: android123
+          ./gradlew assembleRelease --no-daemon
+
+      - name: Sign APK
+        run: |
+          $ANDROID_SDK_ROOT/build-tools/34.0.0/apksigner sign \
+            --ks twa/release.keystore \
+            --ks-key-alias android \
+            --ks-pass pass:android123 \
+            --key-pass pass:android123 \
+            --out twa/mistakecards-signed.apk \
+            twa/app/build/outputs/apk/release/app-release-unsigned.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: mistakecards-apk
-          path: |
-            twa/*.apk
-            twa/*.aab
+          path: twa/mistakecards-signed.apk
           if-no-files-found: error
