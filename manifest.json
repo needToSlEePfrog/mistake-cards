@@ -1,0 +1,50 @@
+{
+  "name": "错题本",
+  "short_name": "错题本",
+  "description": "互动式错题卡 Dashboard",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f0f1a",
+  "theme_color": "#1a1a2e",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "信号与系统",
+      "short_name": "信号",
+      "url": "/?subject=%E4%BF%A1%E5%8F%B7%E4%B8%8E%E7%B3%BB%E7%BB%9F",
+      "description": "信号与系统错题本"
+    },
+    {
+      "name": "复变函数",
+      "short_name": "复变",
+      "url": "/?subject=%E5%A4%8D%E5%8F%98%E5%87%BD%E6%95%B0",
+      "description": "复变函数错题本"
+    },
+    {
+      "name": "电磁波与电磁场",
+      "short_name": "电磁",
+      "url": "/?subject=%E7%94%B5%E7%A3%81%E6%B3%A2%E4%B8%8E%E7%94%B5%E7%A3%81%E5%9C%BA",
+      "description": "电磁波与电磁场错题本"
+    },
+    {
+      "name": "嵌入式系统",
+      "short_name": "嵌入式",
+      "url": "/?subject=%E5%B5%8C%E5%85%A5%E5%BC%8F%E7%B3%BB%E7%BB%9F",
+      "description": "嵌入式系统错题本"
+    }
+  ]
+}
