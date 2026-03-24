@@ -1,1 +1,43 @@
-[]
+[
+  {
+    "id": "20260324-em-001",
+    "subject": "电磁波与电磁场",
+    "type": "example",
+    "title": "空心介质球各区域电场及极化密度",
+    "question": "有一内、外半径分别为 $a$, $b$ 的空心介质球，介电常数为 $\\varepsilon$，介质球均匀带电，电荷密度为 $\\rho_0$。求：(1) 空间各点的电场；(2) 极化体电荷密度和面密度。",
+    "image": null,
+    "steps": [
+      {
+        "key": true,
+        "content": "球对称性 → 高斯定理 $\\oint \\mathbf{D}\\cdot d\\mathbf{S} = Q_{free}$，分三个区域求 $\\mathbf{D}$，再由 $\\mathbf{E}=\\mathbf{D}/\\varepsilon$（介质内）或 $\\mathbf{D}/\\varepsilon_0$（介质外）得电场。"
+      },
+      {
+        "key": false,
+        "content": "$r<a$：$Q_{free}=0 \\Rightarrow \\mathbf{E}=0$"
+      },
+      {
+        "key": false,
+        "content": "$a\\leq r\\leq b$：$Q_{free}=\\frac{4}{3}\\pi(r^3-a^3)\\rho_0$，故 $\\mathbf{E}=\\dfrac{\\rho_0(r^3-a^3)}{3\\varepsilon r^2}\\hat{r}$"
+      },
+      {
+        "key": false,
+        "content": "$r>b$：$Q_{free}=\\frac{4}{3}\\pi(b^3-a^3)\\rho_0$，故 $\\mathbf{E}=\\dfrac{\\rho_0(b^3-a^3)}{3\\varepsilon_0 r^2}\\hat{r}$"
+      },
+      {
+        "key": true,
+        "content": "极化强度 $\\mathbf{P}=(\\varepsilon-\\varepsilon_0)\\mathbf{E}$（仅介质内），体极化密度 $\\rho_p=-\\nabla\\cdot\\mathbf{P}$，面极化密度 $\\sigma_p=\\mathbf{P}\\cdot\\hat{n}$。"
+      },
+      {
+        "key": false,
+        "content": "$\\nabla\\cdot\\mathbf{P} = \\dfrac{(\\varepsilon-\\varepsilon_0)\\rho_0}{\\varepsilon}$，故 $\\rho_p = -\\dfrac{(\\varepsilon-\\varepsilon_0)\\rho_0}{\\varepsilon}$（$a<r<b$）"
+      },
+      {
+        "key": false,
+        "content": "内表面 $r=a$：$P_r=0 \\Rightarrow \\sigma_{p,a}=0$；外表面 $r=b$：$\\sigma_{p,b}=\\dfrac{(\\varepsilon-\\varepsilon_0)\\rho_0(b^3-a^3)}{3\\varepsilon b^2}$"
+      }
+    ],
+    "conclusion": "介质外区域用 $\\varepsilon_0$ 而非 $\\varepsilon$；内表面无极化面电荷是因为内腔处 $\\mathbf{E}=0$。",
+    "tags": ["高斯定理", "介质球", "极化电荷", "电位移矢量"],
+    "created": "2026-03-24"
+  }
+]
