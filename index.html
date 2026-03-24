@@ -897,9 +897,40 @@ async function handleRoute(){
 }
 
 // ━━━ Init ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// ━━━ Remote Sync ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const REMOTE_FILES={
+  '信号与系统':'/data/signals.json',
+  '复变函数':'/data/complex.json',
+  '电磁波与电磁场':'/data/em.json',
+  '嵌入式系统':'/data/embedded.json',
+};
+
+async function syncRemoteCards(){
+  for(const [subj,path] of Object.entries(REMOTE_FILES)){
+    try{
+      const res=await fetch(path+'?t='+Date.now());
+      if(!res.ok) continue;
+      const cards=await res.json();
+      if(!Array.isArray(cards)||cards.length===0) continue;
+      await ensureSubj(subj);
+      const existing=await dbAll('cards');
+      const existingIds=new Set(existing.map(c=>c.id));
+      for(const card of cards){
+        if(!existingIds.has(card.id)){
+          await dbPut('cards',{...card, importedAt:Date.now()});
+        }
+      }
+    }catch(e){
+      console.warn('sync failed for',path,e);
+    }
+  }
+}
+
 async function init(){
   await openDB();
   await insertDemo();
+  await syncRemoteCards();
   S.subjects=await dbAll('subjects');
   await renderDash();
   setupDrop();
