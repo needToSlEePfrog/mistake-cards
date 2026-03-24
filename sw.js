@@ -1,31 +1,16 @@
-// Service Worker — 错题本 PWA
-const STATIC_CACHE = 'mistake-static-v2';
-const FONT_CACHE   = 'mistake-fonts-v1';
-const DATA_CACHE   = 'mistake-data-v1';
+const CACHE = 'mcards-v4';
+const SHELL = ['/', '/index.html', '/manifest.json', '/icon-192.png', '/icon-512.png'];
 
-const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icon-192.png',
-  '/icon-512.png',
-];
-
-// Install: cache static assets
 self.addEventListener('install', e => {
   e.waitUntil(
-    caches.open(STATIC_CACHE)
-      .then(c => c.addAll(STATIC_ASSETS))
-      .then(() => self.skipWaiting())
+    caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())
   );
 });
 
-// Activate: clean old caches
 self.addEventListener('activate', e => {
-  const keep = [STATIC_CACHE, FONT_CACHE, DATA_CACHE];
   e.waitUntil(
     caches.keys()
-      .then(keys => Promise.all(keys.filter(k => !keep.includes(k)).map(k => caches.delete(k))))
+      .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
       .then(() => self.clients.claim())
   );
 });
@@ -33,49 +18,35 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
 
-  // KaTeX fonts: cache-first (they never change)
+  // /data/*.json — always network-first, no cache
+  if (url.pathname.startsWith('/data/') && url.pathname.endsWith('.json')) {
+    e.respondWith(
+      fetch(e.request, { cache: 'no-store' }).catch(() =>
+        caches.match(e.request)
+      )
+    );
+    return;
+  }
+
+  // KaTeX fonts — cache-first (immutable)
   if (url.href.includes('katex') && (url.href.includes('.woff') || url.href.includes('.ttf'))) {
     e.respondWith(
-      caches.open(FONT_CACHE).then(cache =>
-        cache.match(e.request).then(cached => {
-          if (cached) return cached;
-          return fetch(e.request).then(res => {
-            cache.put(e.request, res.clone());
-            return res;
-          });
-        })
+      caches.open('katex-fonts').then(c =>
+        c.match(e.request).then(hit => hit || fetch(e.request).then(r => {
+          c.put(e.request, r.clone()); return r;
+        }))
       )
     );
     return;
   }
 
-  // KaTeX JS/CSS: stale-while-revalidate
-  if (url.href.includes('katex')) {
-    e.respondWith(
-      caches.open(DATA_CACHE).then(cache =>
-        cache.match(e.request).then(cached => {
-          const fetchPromise = fetch(e.request).then(res => {
-            cache.put(e.request, res.clone());
-            return res;
-          });
-          return cached || fetchPromise;
-        })
-      )
-    );
-    return;
-  }
-
-  // App shell: cache-first
+  // App shell — cache-first
   if (url.origin === self.location.origin) {
     e.respondWith(
-      caches.open(STATIC_CACHE).then(cache =>
-        cache.match(e.request).then(cached => {
-          if (cached) return cached;
-          return fetch(e.request).then(res => {
-            cache.put(e.request, res.clone());
-            return res;
-          });
-        })
+      caches.open(CACHE).then(c =>
+        c.match(e.request).then(hit => hit || fetch(e.request).then(r => {
+          c.put(e.request, r.clone()); return r;
+        }))
       )
     );
     return;

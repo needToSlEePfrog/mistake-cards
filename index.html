@@ -3,641 +3,762 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#0d0d14">
+<meta name="theme-color" content="#f5f0e8">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>题目本</title>
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>错题本</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" crossorigin="anonymous">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" crossorigin="anonymous"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
-  crossorigin="anonymous" onload="window._katexReady=true"></script>
-
+  crossorigin="anonymous"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0d0d14;
-  --surf:#13131f;
-  --surf2:#1a1a2a;
-  --bdr:rgba(255,255,255,0.07);
-  --txt:#f0f0f8;
-  --txt2:#8080a8;
-  --txt3:#3a3a55;
-  --accent:#c8a96e;
-  --accent2:#8b9fe8;
-  --card-bg:#f7f6f2;
-  --card-txt:#1a1a28;
-  --card-txt2:#5a5a78;
-  --card-bdr:#e0dfd8;
-  --r:16px; --rs:10px;
+  --paper:#f7f3ec;
+  --paper2:#f0ebe0;
+  --paper3:#e8e1d4;
+  --ink:#1c1a16;
+  --ink2:#6b6456;
+  --ink3:#a89e8e;
+  --rule:#d8d0c0;
   --st:env(safe-area-inset-top,0px);
   --sb:env(safe-area-inset-bottom,0px);
+  --sl:env(safe-area-inset-left,0px);
+  --sr:env(safe-area-inset-right,0px);
 }
+
+/* Subject palette */
+.s-em   { --sc:#c0392b; --sl2:#f9eeec; --sb2:#e8c5c0; }
+.s-sig  { --sc:#2471a3; --sl2:#eaf3fb; --sb2:#b8d4ea; }
+.s-cpx  { --sc:#1e8449; --sl2:#eafaf1; --sb2:#b8e4c8; }
+.s-emb  { --sc:#7d3c98; --sl2:#f5eafb; --sb2:#d8b8e8; }
+.s-def  { --sc:#6b6456; --sl2:#f0ebe0; --sb2:#c8c0b0; }
+
 html,body{
-  height:100%;background:var(--bg);color:var(--txt);
-  font-family:'Noto Sans SC','PingFang SC','Hiragino Sans GB',system-ui,sans-serif;
-  -webkit-font-smoothing:antialiased;overscroll-behavior:none;
+  height:100%;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'Noto Serif SC','Songti SC','STSong','SimSun',Georgia,serif;
+  -webkit-font-smoothing:antialiased;
+  overscroll-behavior:none;
   -webkit-tap-highlight-color:transparent;
 }
 
-/* ── Layout ── */
-#app{height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+#app{
+  height:100dvh;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  max-width:480px;
+  margin:0 auto;
+  /* Paper texture via repeating lines */
+  background-image:repeating-linear-gradient(
+    transparent,
+    transparent 27px,
+    var(--rule) 27px,
+    var(--rule) 28px
+  );
+  background-attachment:local;
+}
+
 .view{display:none;flex-direction:column;flex:1;overflow:hidden}
 .view.active{display:flex}
 
-/* ── Topbar ── */
+/* ── Top bar ── */
 .tb{
-  padding:calc(var(--st) + 14px) 16px 14px;
-  display:flex;align-items:center;gap:10px;
-  background:var(--bg);
+  padding:calc(var(--st) + 12px) 18px 12px;
+  background:var(--paper);
   flex-shrink:0;
-  position:relative;
+  border-bottom:2px solid var(--ink);
+  display:flex;align-items:center;gap:10px;
 }
-.tb::after{
-  content:'';position:absolute;bottom:0;left:16px;right:16px;
-  height:1px;background:var(--bdr);
+.tb-title{
+  flex:1;
+  font-size:18px;font-weight:900;
+  letter-spacing:.04em;
+  color:var(--ink);
 }
-.tb-title{font-size:17px;font-weight:700;flex:1;letter-spacing:.02em}
-.tb-btn{
-  width:36px;height:36px;border:none;background:var(--surf2);
-  color:var(--txt);border-radius:10px;font-size:18px;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;
-  transition:background .12s;flex-shrink:0;border:1px solid var(--bdr);
+.tb-subtitle{
+  font-size:12px;color:var(--ink2);
+  font-family:'Noto Sans SC',sans-serif;
+  margin-top:1px;
 }
-.tb-btn:active{background:var(--surf)}
-.tb-back{font-size:24px;background:transparent;border:none;color:var(--txt2)}
+.tb-back{
+  background:none;border:none;
+  font-size:26px;color:var(--ink2);
+  cursor:pointer;padding:0 4px 0 0;
+  line-height:1;
+}
 
 /* ── Scroll ── */
-.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px}
-.scroll-pb{padding-bottom:calc(var(--sb) + 24px)}
+.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.scroll-pad{padding-bottom:calc(var(--sb) + 32px)}
 
 /* ── Dashboard ── */
-.dash-hero{
-  padding:24px 0 20px;
+.dash-header{
+  padding:24px 18px 16px;
+  border-bottom:1px solid var(--rule);
+}
+.dash-book-label{
+  font-size:10px;font-weight:700;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--ink3);
+  font-family:'Noto Sans SC',sans-serif;
   margin-bottom:8px;
 }
-.dash-hero-label{
-  font-size:11px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;
-  color:var(--accent);margin-bottom:10px;
+.dash-book-title{
+  font-size:30px;font-weight:900;
+  color:var(--ink);
+  letter-spacing:-.01em;
+  line-height:1.1;
 }
-.dash-hero-title{
-  font-size:28px;font-weight:800;color:var(--txt);
-  line-height:1.2;margin-bottom:6px;
+.dash-book-title span{
+  display:block;
+  font-size:13px;font-weight:400;
+  color:var(--ink2);
+  font-family:'Noto Sans SC',sans-serif;
+  margin-top:6px;
+  letter-spacing:.02em;
 }
-.dash-hero-sub{font-size:13px;color:var(--txt2)}
 .dash-stats{
-  display:flex;gap:0;margin-top:20px;
-  background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);
+  display:flex;
+  gap:0;
+  margin-top:18px;
+  border:1px solid var(--rule);
+  border-radius:4px;
   overflow:hidden;
+  background:var(--paper2);
 }
 .dash-stat{
-  flex:1;text-align:center;padding:14px 8px;
+  flex:1;text-align:center;
+  padding:12px 6px;
   position:relative;
+  border-right:1px solid var(--rule);
 }
-.dash-stat+.dash-stat::before{
-  content:'';position:absolute;left:0;top:20%;bottom:20%;
-  width:1px;background:var(--bdr);
+.dash-stat:last-child{border-right:none}
+.dash-stat-n{
+  font-size:24px;font-weight:900;
+  color:var(--ink);line-height:1;
 }
-.dash-stat-n{font-size:22px;font-weight:800;color:var(--accent)}
-.dash-stat-l{font-size:11px;color:var(--txt2);margin-top:3px}
+.dash-stat-l{
+  font-size:10px;color:var(--ink3);
+  margin-top:4px;
+  font-family:'Noto Sans SC',sans-serif;
+}
 
-.sec-label{
-  font-size:11px;font-weight:700;color:var(--txt3);
-  text-transform:uppercase;letter-spacing:.12em;
-  margin:20px 0 10px;
-}
-
-/* ── Subject Grid ── */
-.subj-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.subj-card{
-  background:var(--surf);border:1px solid var(--bdr);
-  border-radius:var(--r);padding:16px;cursor:pointer;
-  transition:transform .15s,border-color .15s;
-  position:relative;overflow:hidden;min-height:90px;
-  display:flex;flex-direction:column;justify-content:space-between;
-}
-.subj-card:active{transform:scale(.97)}
-.subj-card-accent{
-  position:absolute;top:0;left:0;right:0;height:2px;
-  background:var(--c,var(--accent));
-}
-.subj-card-name{font-size:13px;font-weight:700;line-height:1.3;color:var(--txt)}
-.subj-card-count{
-  font-size:24px;font-weight:800;margin-top:8px;
-  color:var(--c,var(--accent));
-}
-.subj-card-lbl{font-size:10px;color:var(--txt2)}
-
-/* ── Card List Item ── */
-.ci{
-  background:var(--surf);border:1px solid var(--bdr);
-  border-radius:var(--r);padding:14px 16px;margin-bottom:8px;
-  cursor:pointer;transition:transform .12s;
-  position:relative;overflow:hidden;
-}
-.ci:active{transform:scale(.985)}
-.ci-accent{
-  position:absolute;left:0;top:0;bottom:0;width:3px;
-  background:var(--c,var(--accent));border-radius:3px 0 0 3px;
-}
-.ci-title{font-size:14px;font-weight:700;color:var(--txt);margin-bottom:6px;padding-left:12px}
-.ci-question{
-  font-size:12px;color:var(--txt2);line-height:1.5;
-  padding-left:12px;
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
-}
-.ci-meta{
-  display:flex;align-items:center;gap:6px;margin-top:8px;padding-left:12px;
-  flex-wrap:wrap;
-}
-.ci-tag{
-  font-size:10px;padding:2px 8px;border-radius:20px;
-  background:var(--surf2);color:var(--txt2);border:1px solid var(--bdr);
-}
-.ci-date{font-size:10px;color:var(--txt3)}
-
-/* ── Search ── */
-.search-wrap{padding:12px 16px 0;flex-shrink:0}
-.search-inp{
-  width:100%;background:var(--surf2);border:1px solid var(--bdr);
-  border-radius:10px;padding:9px 14px;color:var(--txt);font-size:14px;
-  outline:none;transition:border-color .15s;
-}
-.search-inp:focus{border-color:var(--accent)}
-.search-inp::placeholder{color:var(--txt3)}
-
-/* ── Card Detail (WHITE CARD) ── */
-#v-card{background:var(--bg)}
-.card-wrap{
-  flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
-  padding:16px 16px calc(var(--sb) + 24px);
-}
-.white-card{
-  background:var(--card-bg);border-radius:20px;
-  overflow:hidden;
-  box-shadow:0 8px 40px rgba(0,0,0,.4);
-}
-.card-subject-bar{
-  padding:14px 20px 0;
+/* ── Section label ── */
+.sec{
+  padding:16px 18px 8px;
+  font-size:10px;font-weight:700;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--ink3);
+  font-family:'Noto Sans SC',sans-serif;
   display:flex;align-items:center;gap:8px;
 }
-.card-subject-chip{
-  font-size:11px;font-weight:700;letter-spacing:.08em;
-  padding:4px 10px;border-radius:20px;
-  background:var(--cc-bg,#f0ede6);color:var(--cc,#8b7355);
+.sec::after{
+  content:'';flex:1;height:1px;background:var(--rule);
 }
-.card-date{font-size:11px;color:var(--card-txt2);margin-left:auto}
-.card-tags{
-  padding:8px 20px 0;display:flex;gap:6px;flex-wrap:wrap;
+
+/* ── Subject cards ── */
+.subj-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:10px;padding:0 18px;
 }
-.card-tag{
-  font-size:10px;padding:3px 8px;border-radius:20px;
-  background:#eeecea;color:var(--card-txt2);
-}
-.card-question{
-  padding:16px 20px 20px;
-  font-size:16px;font-weight:700;line-height:1.6;
-  color:var(--card-txt);
-  border-bottom:1px solid var(--card-bdr);
-}
-.card-image{
-  width:calc(100% - 40px);margin:0 20px 16px;
-  border-radius:10px;border:1px solid var(--card-bdr);
+.subj-card{
+  background:var(--paper2);
+  border:1px solid var(--rule);
+  border-radius:4px;
+  padding:14px 14px 12px;
+  cursor:pointer;
+  transition:transform .12s;
+  position:relative;
   overflow:hidden;
 }
-.card-image img{width:100%;display:block}
+.subj-card::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--sc);
+}
+.subj-card:active{transform:scale(.97)}
+.subj-card-name{
+  font-size:13px;font-weight:700;
+  color:var(--ink);line-height:1.3;
+  margin-top:4px;
+}
+.subj-card-count{
+  font-size:28px;font-weight:900;
+  color:var(--sc);
+  margin-top:6px;line-height:1;
+}
+.subj-card-lbl{
+  font-size:10px;color:var(--ink3);
+  font-family:'Noto Sans SC',sans-serif;
+}
 
-/* steps */
-.card-steps{padding:20px}
-.step{margin-bottom:16px}
-.step:last-child{margin-bottom:0}
-.step-key{
-  display:flex;gap:12px;align-items:flex-start;
+/* ── Card list item ── */
+.ci{
+  margin:0 18px 8px;
+  background:var(--paper);
+  border:1px solid var(--rule);
+  border-left:3px solid var(--sc);
+  padding:12px 14px;
+  cursor:pointer;
+  transition:transform .1s;
+  border-radius:0 4px 4px 0;
 }
-.step-key-dot{
-  width:6px;height:6px;border-radius:50%;
-  background:var(--cc,#8b7355);margin-top:7px;flex-shrink:0;
+.ci:active{transform:scale(.985)}
+.ci-title{
+  font-size:14px;font-weight:700;
+  color:var(--ink);margin-bottom:5px;
 }
-.step-key-content{
-  font-size:14px;line-height:1.7;color:var(--card-txt);font-weight:600;flex:1;
+.ci-question{
+  font-size:12px;color:var(--ink2);
+  line-height:1.6;
+  font-family:'Noto Sans SC',sans-serif;
+  display:-webkit-box;-webkit-line-clamp:2;
+  -webkit-box-orient:vertical;overflow:hidden;
 }
-.step-detail-toggle{
+.ci-meta{
   display:flex;align-items:center;gap:6px;
-  margin-top:6px;padding:6px 10px;
-  background:#eeecea;border-radius:8px;
-  font-size:12px;color:var(--card-txt2);cursor:pointer;
-  border:none;width:100%;text-align:left;
-  transition:background .12s;
+  margin-top:8px;flex-wrap:wrap;
 }
-.step-detail-toggle:active{background:#e5e3df}
-.step-detail-content{
-  margin-top:8px;padding:10px 12px;
-  background:#f2f0ec;border-radius:8px;
-  font-size:13px;line-height:1.7;color:var(--card-txt);
+.ci-tag{
+  font-size:10px;padding:2px 7px;
+  border:1px solid var(--rule);
+  color:var(--ink2);
+  font-family:'Noto Sans SC',sans-serif;
+  border-radius:2px;
+}
+.ci-date{font-size:10px;color:var(--ink3);margin-left:auto;font-family:'Noto Sans SC',sans-serif;}
+
+/* ── Search ── */
+.search-row{
+  padding:10px 18px;
+  flex-shrink:0;
+  border-bottom:1px solid var(--rule);
+}
+.search-inp{
+  width:100%;
+  background:var(--paper2);
+  border:1px solid var(--rule);
+  padding:8px 12px;
+  font-size:13px;color:var(--ink);
+  font-family:'Noto Sans SC',sans-serif;
+  outline:none;border-radius:2px;
+  transition:border-color .15s;
+}
+.search-inp:focus{border-color:var(--ink2)}
+.search-inp::placeholder{color:var(--ink3)}
+
+/* ── Card detail ── */
+#v-card{background:var(--paper)}
+
+.card-scroll{
+  flex:1;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  padding:0 0 calc(var(--sb)+32px);
+}
+
+/* Card header strip */
+.card-header{
+  background:var(--sl2,#f0ebe0);
+  border-bottom:2px solid var(--sc,#6b6456);
+  padding:16px 18px 14px;
+}
+.card-header-top{
+  display:flex;align-items:center;gap:8px;margin-bottom:10px;
+}
+.card-subject-chip{
+  font-size:10px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;
+  background:var(--sc);color:#fff;
+  padding:3px 8px;border-radius:2px;
+  font-family:'Noto Sans SC',sans-serif;
+}
+.card-type-chip{
+  font-size:10px;color:var(--sc);
+  font-family:'Noto Sans SC',sans-serif;
+  border:1px solid var(--sb2,#c8c0b0);
+  padding:2px 7px;border-radius:2px;
+}
+.card-date{font-size:10px;color:var(--ink3);margin-left:auto;font-family:'Noto Sans SC',sans-serif;}
+
+.card-title{
+  font-size:17px;font-weight:900;
+  color:var(--ink);line-height:1.4;
+  margin-bottom:10px;
+}
+.card-tags{display:flex;gap:5px;flex-wrap:wrap}
+.card-tag{
+  font-size:10px;color:var(--ink2);
+  border:1px solid var(--sb2,#c8c0b0);
+  padding:2px 7px;border-radius:2px;
+  font-family:'Noto Sans SC',sans-serif;
+}
+
+/* Question block */
+.card-question-block{
+  margin:16px 18px 0;
+  padding:14px 16px;
+  background:var(--paper2);
+  border:1px solid var(--rule);
+  border-left:4px solid var(--sc,#6b6456);
+  border-radius:0 4px 4px 0;
+}
+.card-question-label{
+  font-size:9px;font-weight:700;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--ink3);
+  font-family:'Noto Sans SC',sans-serif;
+  margin-bottom:8px;
+}
+.card-question-text{
+  font-size:14px;line-height:1.8;color:var(--ink);
+}
+
+/* Image */
+.card-image-block{
+  margin:12px 18px 0;
+  border:1px solid var(--rule);
+  border-radius:4px;overflow:hidden;
+}
+.card-image-block img{width:100%;display:block}
+
+/* Divider */
+.card-divider{
+  display:flex;align-items:center;gap:10px;
+  margin:18px 18px 0;
+}
+.card-divider-label{
+  font-size:9px;font-weight:700;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--ink3);
+  font-family:'Noto Sans SC',sans-serif;
+  white-space:nowrap;
+}
+.card-divider-line{flex:1;height:1px;background:var(--rule)}
+
+/* Steps */
+.card-steps{padding:12px 18px 0}
+.step{margin-bottom:10px}
+
+.step-key-row{display:flex;gap:10px;align-items:flex-start}
+.step-key-bullet{
+  width:18px;height:18px;border-radius:50%;
+  background:var(--sc,#6b6456);
+  color:#fff;font-size:10px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:2px;
+  font-family:'Noto Sans SC',sans-serif;
+}
+.step-key-text{
+  font-size:14px;font-weight:700;
+  color:var(--ink);line-height:1.7;flex:1;
+}
+
+.step-detail-btn{
+  display:flex;align-items:center;gap:6px;
+  margin:4px 0 0 28px;
+  padding:5px 10px;
+  background:var(--paper2);
+  border:1px solid var(--rule);
+  border-radius:2px;
+  font-size:11px;color:var(--ink2);
+  cursor:pointer;font-family:'Noto Sans SC',sans-serif;
+  width:fit-content;
+}
+.step-detail-body{
+  margin:6px 0 0 28px;
+  padding:10px 12px;
+  background:var(--paper2);
+  border:1px solid var(--rule);
+  border-radius:2px;
+  font-size:13px;line-height:1.8;
+  color:var(--ink);
   display:none;
 }
-.step-detail-content.open{display:block}
+.step-detail-body.open{display:block}
 
+.step-lone{
+  display:flex;gap:10px;align-items:flex-start;
+  margin-bottom:6px;
+}
+.step-lone-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--rule);
+  flex-shrink:0;margin-top:8px;
+}
+.step-lone-text{
+  font-size:13px;color:var(--ink2);line-height:1.7;flex:1;
+  font-family:'Noto Sans SC',sans-serif;
+}
+
+/* Conclusion */
 .card-conclusion{
-  margin:0 20px 20px;padding:14px 16px;
-  background:#f0ede6;border-radius:12px;
-  border-left:3px solid var(--cc,#c8a96e);
-  font-size:13px;line-height:1.6;color:var(--card-txt);
+  margin:16px 18px 0;
+  padding:14px 16px;
+  background:var(--sl2,#f0ebe0);
+  border:1px solid var(--sb2,#c8c0b0);
+  border-radius:4px;
+  position:relative;
+}
+.card-conclusion::before{
+  content:'"';
+  position:absolute;top:-4px;left:12px;
+  font-size:40px;color:var(--sc);
+  opacity:.25;line-height:1;
+  font-family:Georgia,serif;
 }
 .card-conclusion-label{
-  font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--cc,#8b7355);margin-bottom:6px;
+  font-size:9px;font-weight:700;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--sc);
+  font-family:'Noto Sans SC',sans-serif;margin-bottom:6px;
+}
+.card-conclusion-text{
+  font-size:13px;line-height:1.8;
+  color:var(--ink);font-style:italic;
 }
 
-/* ── Empty ── */
-.empty{text-align:center;padding:56px 20px;color:var(--txt2)}
-.empty-icon{font-size:40px;margin-bottom:12px;opacity:.5}
-.empty-title{font-size:15px;font-weight:700;color:var(--txt);margin-bottom:6px}
-.empty-sub{font-size:13px;color:var(--txt2);line-height:1.6}
+/* ── Loading / Empty ── */
+.loading{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:60px 20px;color:var(--ink3);
+  gap:12px;font-family:'Noto Sans SC',sans-serif;font-size:13px;
+}
+.loading-spinner{
+  width:24px;height:24px;border:2px solid var(--rule);
+  border-top-color:var(--ink2);border-radius:50%;
+  animation:spin .7s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-/* ── Sync indicator ── */
-.sync-bar{
-  display:none;align-items:center;gap:8px;
-  padding:8px 16px;background:var(--surf);
-  font-size:12px;color:var(--txt2);flex-shrink:0;
-  border-bottom:1px solid var(--bdr);
-}
-.sync-bar.show{display:flex}
-.sync-dot{
-  width:6px;height:6px;border-radius:50%;
-  background:var(--accent);animation:pulse 1s infinite;
-}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.empty{text-align:center;padding:48px 20px;color:var(--ink3)}
+.empty-icon{font-size:32px;margin-bottom:10px;opacity:.5}
+.empty-title{font-size:14px;font-weight:700;color:var(--ink2);margin-bottom:4px}
+.empty-sub{font-size:12px;line-height:1.6;font-family:'Noto Sans SC',sans-serif}
 
 /* ── Toast ── */
 .toast{
-  position:fixed;bottom:calc(var(--sb) + 20px);left:50%;transform:translateX(-50%) translateY(20px);
-  background:var(--surf);border:1px solid var(--bdr);
-  color:var(--txt);padding:10px 20px;border-radius:100px;
-  font-size:13px;opacity:0;transition:all .25s;pointer-events:none;
+  position:fixed;bottom:calc(var(--sb)+16px);
+  left:50%;transform:translateX(-50%) translateY(12px);
+  background:var(--ink);color:var(--paper);
+  padding:8px 18px;border-radius:2px;
+  font-size:12px;font-family:'Noto Sans SC',sans-serif;
+  opacity:0;transition:all .2s;pointer-events:none;
   white-space:nowrap;z-index:999;
 }
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-/* ── KaTeX overrides for white card ── */
-.white-card .katex{font-size:1em}
-.white-card .katex-display{margin:.5em 0;overflow-x:auto}
+/* ── KaTeX ── */
+.katex{font-size:.95em}
+.katex-display{margin:.6em 0;overflow-x:auto}
 </style>
 </head>
 <body>
 <div id="app">
 
-<!-- ══ DASH ══════════════════════════════════════════════════════ -->
+<!-- ══ DASHBOARD ══════════════════════════════════════════════ -->
 <div class="view active" id="v-dash">
-  <div class="sync-bar" id="sync-bar">
-    <div class="sync-dot"></div>
-    <span id="sync-msg">同步中…</span>
+  <div class="tb">
+    <div>
+      <div class="tb-title">错题本</div>
+      <div class="tb-subtitle" id="dash-subtitle">加载中…</div>
+    </div>
   </div>
-  <div class="scroll scroll-pb">
-    <div class="dash-hero">
-      <div class="dash-hero-label">My Notebook</div>
-      <div class="dash-hero-title">题目本</div>
-      <div class="dash-hero-sub" id="hero-sub">加载中…</div>
+  <div class="scroll scroll-pad" id="dash-scroll">
+    <div class="dash-header">
+      <div class="dash-book-label">Study Notebook</div>
+      <div class="dash-book-title">
+        我的错题本
+        <span id="dash-desc">正在同步题目…</span>
+      </div>
       <div class="dash-stats">
         <div class="dash-stat">
-          <div class="dash-stat-n" id="stat-total">0</div>
+          <div class="dash-stat-n" id="stat-total">—</div>
           <div class="dash-stat-l">道题目</div>
         </div>
         <div class="dash-stat">
-          <div class="dash-stat-n" id="stat-subj">0</div>
+          <div class="dash-stat-n" id="stat-subj">—</div>
           <div class="dash-stat-l">个科目</div>
         </div>
         <div class="dash-stat">
-          <div class="dash-stat-n" id="stat-week">0</div>
+          <div class="dash-stat-n" id="stat-week">—</div>
           <div class="dash-stat-l">本周新增</div>
         </div>
       </div>
     </div>
-    <div class="sec-label">科目</div>
+    <div class="sec">科目</div>
     <div class="subj-grid" id="subj-grid"></div>
-    <div class="sec-label" id="recent-label">最近添加</div>
+    <div class="sec" id="recent-sec" style="display:none">最近添加</div>
     <div id="recent-list"></div>
   </div>
 </div>
 
-<!-- ══ SUBJECT ════════════════════════════════════════════════════ -->
+<!-- ══ SUBJECT ════════════════════════════════════════════════ -->
 <div class="view" id="v-subj">
   <div class="tb">
-    <button class="tb-btn tb-back" onclick="back()">‹</button>
-    <div class="tb-title" id="subj-title"></div>
+    <button class="tb-back" onclick="back()">‹</button>
+    <div>
+      <div class="tb-title" id="subj-title"></div>
+      <div class="tb-subtitle" id="subj-count"></div>
+    </div>
   </div>
-  <div class="search-wrap">
-    <input class="search-inp" placeholder="搜索题目…" id="search-inp" oninput="filterCards()">
+  <div class="search-row">
+    <input class="search-inp" placeholder="搜索题目标题或关键词…" id="search-inp" oninput="filterCards()">
   </div>
-  <div class="scroll scroll-pb" style="padding-top:12px">
+  <div class="scroll scroll-pad" style="padding-top:10px">
     <div id="subj-list"></div>
   </div>
 </div>
 
-<!-- ══ CARD DETAIL ════════════════════════════════════════════════ -->
+<!-- ══ CARD DETAIL ════════════════════════════════════════════ -->
 <div class="view" id="v-card">
   <div class="tb">
-    <button class="tb-btn tb-back" onclick="back()">‹</button>
-    <div class="tb-title" id="cd-subj-label" style="font-size:14px;color:var(--txt2)"></div>
+    <button class="tb-back" onclick="back()">‹</button>
+    <div class="tb-title" id="cd-title" style="font-size:14px"></div>
   </div>
-  <div class="card-wrap" id="card-wrap"></div>
+  <div class="card-scroll" id="card-scroll"></div>
 </div>
 
-</div><!-- #app -->
-
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
-// ━━━ Subject colors ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-const SUBJ_COLORS = {
-  '信号与系统':  {c:'#7a9fe8', bg:'#eef2fc', chip:'#c8d8f8', chipTxt:'#3a5aaa'},
-  '复变函数':    {c:'#e88a9a', bg:'#fceef0', chip:'#f8d0d8', chipTxt:'#aa3a5a'},
-  '电磁波与电磁场':{c:'#8bc87a', bg:'#eef8ec', chip:'#cceec8', chipTxt:'#3a7a2a'},
-  '嵌入式系统':  {c:'#c8a96e', bg:'#faf5ec', chip:'#f0e0c0', chipTxt:'#7a5a20'},
-};
-function subjColor(name){
-  return SUBJ_COLORS[name] || {c:'#9090b8',bg:'#f0f0f8',chip:'#dcdcf0',chipTxt:'#505080'};
+// ━━━ Subject config ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const SUBJECTS = [
+  { name:'电磁波与电磁场', file:'em.json',       cls:'s-em',  code:'em'  },
+  { name:'信号与系统',     file:'signals.json',  cls:'s-sig', code:'sig' },
+  { name:'复变函数',       file:'complex.json',  cls:'s-cpx', code:'cpx' },
+  { name:'嵌入式系统',     file:'embedded.json', cls:'s-emb', code:'emb' },
+];
+function subjCls(name){
+  return SUBJECTS.find(s=>s.name===name)?.cls || 's-def';
+}
+function typeLabel(t){
+  return {mistake:'错题',example:'例题',good:'好题'}[t]||t||'题目';
 }
 
-// ━━━ IndexedDB ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-let db;
-function openDB(){
-  return new Promise((res,rej)=>{
-    const r=indexedDB.open('mcards-v3',1);
-    r.onupgradeneeded=e=>{
-      const d=e.target.result;
-      if(!d.objectStoreNames.contains('cards')){
-        const cs=d.createObjectStore('cards',{keyPath:'id'});
-        cs.createIndex('subject','subject',{unique:false});
-        cs.createIndex('created','created',{unique:false});
-      }
-    };
-    r.onsuccess=e=>{db=e.target.result;res(db)};
-    r.onerror=e=>rej(e.target.error);
-  });
-}
-const tx=(s,m='readonly')=>db.transaction(s,m).objectStore(s);
-const dbAll=s=>new Promise((r,j)=>{const q=tx(s).getAll();q.onsuccess=()=>r(q.result);q.onerror=()=>j(q.error)});
-const dbPut=(s,d)=>new Promise((r,j)=>{const q=tx(s,'readwrite').put(d);q.onsuccess=()=>r(q.result);q.onerror=()=>j(q.error)});
-const dbGet=(s,k)=>new Promise((r,j)=>{const q=tx(s).get(k);q.onsuccess=()=>r(q.result);q.onerror=()=>j(q.error)});
-const dbIdx=(s,i,v)=>new Promise((r,j)=>{const q=tx(s).index(i).getAll(v);q.onsuccess=()=>r(q.result);q.onerror=()=>j(q.error)});
+// ━━━ Data — network-first, no IndexedDB ━━━━━━━━━━━━━━━━━━━━
+let ALL_CARDS = [];   // flat array of all cards
+let LAST_FETCH = 0;
 
-// ━━━ Remote Sync ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-const REMOTE_FILES={
-  '信号与系统':  '/data/signals.json',
-  '复变函数':    '/data/complex.json',
-  '电磁波与电磁场':'/data/em.json',
-  '嵌入式系统':  '/data/embedded.json',
-};
-
-async function syncRemoteCards(){
-  showSync('同步题目…');
-  let added=0;
-  const existing=await dbAll('cards');
-  const existingIds=new Set(existing.map(c=>c.id));
-
-  for(const [,path] of Object.entries(REMOTE_FILES)){
-    try{
-      const res=await fetch(path+'?t='+Date.now());
-      if(!res.ok) continue;
-      const cards=await res.json();
-      if(!Array.isArray(cards)) continue;
-      for(const card of cards){
-        if(!existingIds.has(card.id)){
-          await dbPut('cards',{...card,syncedAt:Date.now()});
-          existingIds.add(card.id);
-          added++;
-        }
-      }
-    }catch(e){console.warn('sync failed',path,e)}
-  }
-  hideSync();
-  if(added>0) toast(`已同步 ${added} 道新题目`);
+async function fetchSubject(file){
+  const res = await fetch('/data/'+file+'?t='+Date.now(),{cache:'no-store'});
+  if(!res.ok) return [];
+  const data = await res.json();
+  return Array.isArray(data) ? data : [];
 }
 
-function showSync(msg){
-  document.getElementById('sync-bar').classList.add('show');
-  document.getElementById('sync-msg').textContent=msg;
+async function loadAll(forceRefresh=false){
+  if(!forceRefresh && ALL_CARDS.length && Date.now()-LAST_FETCH < 60000) return ALL_CARDS;
+  const results = await Promise.allSettled(SUBJECTS.map(s=>fetchSubject(s.file)));
+  ALL_CARDS = results.flatMap(r=>r.status==='fulfilled'?r.value:[]);
+  LAST_FETCH = Date.now();
+  return ALL_CARDS;
 }
-function hideSync(){document.getElementById('sync-bar').classList.remove('show')}
 
-// ━━━ State ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-const S={curSubj:null,curCard:null,stack:['v-dash'],allCards:[]};
+function cardsForSubject(name){ return ALL_CARDS.filter(c=>c.subject===name) }
 
-// ━━━ Navigation ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// ━━━ Navigation ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const stack = ['v-dash'];
 function nav(id){
   document.querySelector('.view.active')?.classList.remove('active');
   document.getElementById(id).classList.add('active');
-  S.stack.push(id);
+  stack.push(id);
 }
 function back(){
-  if(S.stack.length<=1) return;
+  if(stack.length<=1) return;
   document.querySelector('.view.active')?.classList.remove('active');
-  S.stack.pop();
-  const prev=S.stack[S.stack.length-1];
-  document.getElementById(prev).classList.add('active');
-  if(prev==='v-dash') renderDash();
-  if(prev==='v-subj') renderSubj(S.curSubj);
+  stack.pop();
+  document.getElementById(stack[stack.length-1]).classList.add('active');
 }
 
-// ━━━ Dashboard ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// ━━━ Dashboard ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 async function renderDash(){
-  const all=await dbAll('cards');
-  S.allCards=all;
-  const subjSet=[...new Set(all.map(c=>c.subject))];
-  const weekAgo=Date.now()-7*86400000;
-  const weekNew=all.filter(c=>new Date(c.created).getTime()>weekAgo||c.syncedAt>weekAgo).length;
+  const cards = await loadAll(true);
+  const subjSet = [...new Set(cards.map(c=>c.subject))];
+  const weekAgo = Date.now()-7*86400000;
+  const weekNew = cards.filter(c=>new Date(c.created).getTime()>weekAgo).length;
 
-  document.getElementById('stat-total').textContent=all.length;
-  document.getElementById('stat-subj').textContent=subjSet.length;
-  document.getElementById('stat-week').textContent=weekNew;
-  document.getElementById('hero-sub').textContent=
-    all.length ? `${subjSet.length} 个科目 · ${all.length} 道题目` : '暂无题目，等待同步…';
+  document.getElementById('stat-total').textContent = cards.length;
+  document.getElementById('stat-subj').textContent  = subjSet.length;
+  document.getElementById('stat-week').textContent  = weekNew;
+  document.getElementById('dash-desc').textContent  =
+    cards.length ? `共 ${subjSet.length} 个科目，${cards.length} 道题目` : '暂无题目';
+  document.getElementById('dash-subtitle').textContent =
+    cards.length ? '点击科目查看题目' : '等待题目同步…';
 
   // Subject grid
-  const grid=document.getElementById('subj-grid');
-  grid.innerHTML='';
-  if(subjSet.length===0){
-    grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:24px;color:var(--txt2);font-size:13px">暂无科目</div>';
-  } else {
-    subjSet.forEach(name=>{
-      const count=all.filter(c=>c.subject===name).length;
-      const col=subjColor(name);
-      const el=document.createElement('div');
-      el.className='subj-card';
-      el.style.setProperty('--c',col.c);
-      el.innerHTML=`
-        <div class="subj-card-accent"></div>
-        <div class="subj-card-name">${name}</div>
-        <div>
-          <div class="subj-card-count">${count}</div>
-          <div class="subj-card-lbl">道题目</div>
-        </div>`;
-      el.onclick=()=>openSubj(name);
-      grid.appendChild(el);
-    });
-  }
+  const grid = document.getElementById('subj-grid');
+  grid.innerHTML = '';
+  SUBJECTS.forEach(s=>{
+    const count = cards.filter(c=>c.subject===s.name).length;
+    const el = document.createElement('div');
+    el.className = `subj-card ${s.cls}`;
+    el.innerHTML = `
+      <div class="subj-card-name">${s.name}</div>
+      <div class="subj-card-count">${count}</div>
+      <div class="subj-card-lbl">道题目</div>`;
+    el.onclick = ()=>openSubj(s.name, s.cls);
+    grid.appendChild(el);
+  });
 
-  // Recent
-  const recent=document.getElementById('recent-list');
-  const rl=document.getElementById('recent-label');
-  const sorted=[...all].sort((a,b)=>(b.syncedAt||0)-(a.syncedAt||0)).slice(0,5);
-  if(sorted.length===0){rl.style.display='none';recent.innerHTML='';return}
-  rl.style.display='';
-  recent.innerHTML='';
-  sorted.forEach(c=>recent.appendChild(mkCI(c)));
-  doMath(recent);
+  // Recent 5
+  const recentSec = document.getElementById('recent-sec');
+  const recentList = document.getElementById('recent-list');
+  const sorted = [...cards].sort((a,b)=>
+    (b.created||'').localeCompare(a.created||'')).slice(0,5);
+  if(sorted.length){
+    recentSec.style.display='';
+    recentList.innerHTML='';
+    sorted.forEach(c=>{
+      recentList.appendChild(mkCI(c, subjCls(c.subject)));
+    });
+    doMath(recentList);
+  } else {
+    recentSec.style.display='none';
+  }
 }
 
-// ━━━ Subject view ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-async function openSubj(name){
-  S.curSubj=name;
+// ━━━ Subject view ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+let curSubjName='', curSubjCls='';
+function openSubj(name, cls){
+  curSubjName=name; curSubjCls=cls;
   document.getElementById('subj-title').textContent=name;
   document.getElementById('search-inp').value='';
-  await renderSubj(name);
+  renderSubj();
   nav('v-subj');
 }
-async function renderSubj(name){
-  const cards=await dbIdx('cards','subject',name);
+function renderSubj(){
+  const cards = cardsForSubject(curSubjName)
+    .sort((a,b)=>(b.created||'').localeCompare(a.created||''));
+  document.getElementById('subj-count').textContent=`${cards.length} 道题目`;
   const list=document.getElementById('subj-list');
   list.innerHTML='';
-  if(cards.length===0){
-    list.innerHTML='<div class="empty"><div class="empty-icon">📭</div><div class="empty-title">暂无题目</div></div>';
+  if(!cards.length){
+    list.innerHTML='<div class="empty"><div class="empty-icon">📭</div><div class="empty-title">暂无题目</div><div class="empty-sub">该科目还没有题目</div></div>';
     return;
   }
-  const sorted=[...cards].sort((a,b)=>b.created?.localeCompare(a.created||'')||0);
-  sorted.forEach(c=>{list.appendChild(mkCI(c))});
+  cards.forEach(c=>list.appendChild(mkCI(c,curSubjCls)));
   doMath(list);
 }
 function filterCards(){
   const q=document.getElementById('search-inp').value.trim().toLowerCase();
-  const list=document.getElementById('subj-list');
-  list.querySelectorAll('.ci').forEach(el=>{
-    const text=(el.dataset.search||'').toLowerCase();
-    el.style.display=(!q||text.includes(q))?'':'none';
+  document.querySelectorAll('#subj-list .ci').forEach(el=>{
+    el.style.display=(!q||el.dataset.search.includes(q))?'':'none';
   });
 }
 
-// ━━━ Card list item ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-function mkCI(card){
-  const col=subjColor(card.subject);
+// ━━━ Card list item ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function mkCI(card, cls){
   const el=document.createElement('div');
-  el.className='ci';
-  el.style.setProperty('--c',col.c);
-  el.dataset.search=[card.title,card.question,...(card.tags||[])].join(' ');
+  el.className=`ci ${cls}`;
+  el.dataset.search=[card.title,card.question,...(card.tags||[])].join(' ').toLowerCase();
   const tags=(card.tags||[]).slice(0,3).map(t=>`<span class="ci-tag">${t}</span>`).join('');
   el.innerHTML=`
-    <div class="ci-accent"></div>
     <div class="ci-title">${card.title||'无标题'}</div>
     <div class="ci-question">${stripMath(card.question||'')}</div>
     <div class="ci-meta">${tags}<span class="ci-date">${card.created||''}</span></div>`;
-  el.onclick=()=>openCard(card);
+  el.onclick=()=>openCard(card,cls);
   return el;
 }
 function stripMath(s){return s.replace(/\$\$[\s\S]*?\$\$/g,'[式]').replace(/\$[^$]*?\$/g,'[式]')}
 
-// ━━━ Card detail ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-function openCard(card){
-  S.curCard=card;
-  const col=subjColor(card.subject);
-  document.getElementById('cd-subj-label').textContent=card.subject;
-
-  const wrap=document.getElementById('card-wrap');
-  wrap.scrollTop=0;
+// ━━━ Card detail ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function openCard(card, cls){
+  document.getElementById('cd-title').textContent=card.title||'题目详情';
+  const scroll=document.getElementById('card-scroll');
+  scroll.scrollTop=0;
 
   const tags=(card.tags||[]).map(t=>`<span class="card-tag">${t}</span>`).join('');
 
-  // Build steps HTML
+  // Steps
   let stepsHtml='';
   const steps=card.steps||[];
-
-  // Group: key step followed by its detail steps
-  let i=0;
+  let keyIdx=0, i=0;
   while(i<steps.length){
     const s=steps[i];
     if(s.key){
-      // collect following non-key steps as details
-      let details=[];
-      let j=i+1;
-      while(j<steps.length && !steps[j].key){
-        details.push(steps[j]);
-        j++;
-      }
-      if(details.length>0){
-        const detailContent=details.map(d=>`<div style="margin-bottom:8px">${d.content}</div>`).join('');
-        stepsHtml+=`
-          <div class="step">
-            <div class="step-key">
-              <div class="step-key-dot" style="background:${col.c}"></div>
-              <div class="step-key-content">${s.content}</div>
-            </div>
-            <button class="step-detail-toggle" onclick="toggleDetail(this)">
-              <span style="font-size:10px">▸</span> 查看推导细节
-            </button>
-            <div class="step-detail-content">${detailContent}</div>
-          </div>`;
-      } else {
-        stepsHtml+=`
-          <div class="step">
-            <div class="step-key">
-              <div class="step-key-dot" style="background:${col.c}"></div>
-              <div class="step-key-content">${s.content}</div>
-            </div>
-          </div>`;
-      }
+      keyIdx++;
+      let details=[], j=i+1;
+      while(j<steps.length&&!steps[j].key){details.push(steps[j]);j++;}
+      const uid=`step-${Math.random().toString(36).slice(2)}`;
+      const detailHtml=details.length?`
+        <button class="step-detail-btn" onclick="toggleDetail('${uid}')">
+          <span id="${uid}-arr">▸</span> 查看推导细节
+        </button>
+        <div class="step-detail-body" id="${uid}">
+          ${details.map(d=>`<div style="margin-bottom:6px">${d.content}</div>`).join('')}
+        </div>`:'';
+      stepsHtml+=`
+        <div class="step">
+          <div class="step-key-row">
+            <div class="step-key-bullet">${keyIdx}</div>
+            <div class="step-key-text">${s.content}</div>
+          </div>
+          ${detailHtml}
+        </div>`;
       i=j;
     } else {
       stepsHtml+=`
-        <div class="step">
-          <div class="step-key">
-            <div class="step-key-dot" style="background:${col.c};opacity:.4"></div>
-            <div class="step-key-content" style="font-weight:400">${s.content}</div>
-          </div>
+        <div class="step-lone">
+          <div class="step-lone-dot"></div>
+          <div class="step-lone-text">${s.content}</div>
         </div>`;
       i++;
     }
   }
 
   const imgHtml=card.image?`
-    <div class="card-image">
-      <img src="/data/images/${card.image}" alt="原题图片">
+    <div class="card-image-block">
+      <img src="/data/images/${card.image}" alt="题目图片" loading="lazy">
+    </div>`:''
+
+  const concHtml=card.conclusion?`
+    <div class="card-divider">
+      <div class="card-divider-label">关键结论</div>
+      <div class="card-divider-line"></div>
+    </div>
+    <div class="card-conclusion ${cls}">
+      <div class="card-conclusion-label">Key Takeaway</div>
+      <div class="card-conclusion-text">${card.conclusion}</div>
     </div>`:'';
 
-  const conclusionHtml=card.conclusion?`
-    <div class="card-conclusion" style="border-color:${col.c}">
-      <div class="card-conclusion-label" style="color:${col.c}">关键结论</div>
-      ${card.conclusion}
-    </div>`:'';
-
-  wrap.innerHTML=`
-    <div class="white-card" style="--cc:${col.c};--cc-bg:${col.bg}">
-      <div class="card-subject-bar">
-        <span class="card-subject-chip" style="background:${col.chip};color:${col.chipTxt}">${card.subject}</span>
-        <span class="card-date">${card.created||''}</span>
+  scroll.innerHTML=`
+    <div class="${cls}">
+      <div class="card-header">
+        <div class="card-header-top">
+          <span class="card-subject-chip">${card.subject}</span>
+          <span class="card-type-chip">${typeLabel(card.type)}</span>
+          <span class="card-date">${card.created||''}</span>
+        </div>
+        <div class="card-title">${card.title||''}</div>
+        ${tags?`<div class="card-tags">${tags}</div>`:''}
       </div>
-      ${tags?`<div class="card-tags">${tags}</div>`:''}
-      <div class="card-question">${card.question||''}</div>
+      <div class="card-question-block">
+        <div class="card-question-label">题目</div>
+        <div class="card-question-text">${card.question||''}</div>
+      </div>
       ${imgHtml}
+      <div class="card-divider" style="margin-top:18px">
+        <div class="card-divider-label">解题思路</div>
+        <div class="card-divider-line"></div>
+      </div>
       <div class="card-steps">${stepsHtml}</div>
-      ${conclusionHtml}
+      ${concHtml}
     </div>`;
 
   nav('v-card');
-  doMath(wrap);
+  doMath(scroll);
 }
 
-function toggleDetail(btn){
-  const content=btn.nextElementSibling;
-  const open=content.classList.toggle('open');
-  btn.querySelector('span').textContent=open?'▾':'▸';
-  btn.childNodes[1].textContent=open?' 收起细节':' 查看推导细节';
-  if(open) doMath(content);
+function toggleDetail(uid){
+  const body=document.getElementById(uid);
+  const arr=document.getElementById(uid+'-arr');
+  const open=body.classList.toggle('open');
+  arr.textContent=open?'▾':'▸';
+  if(open) doMath(body);
 }
 
-// ━━━ KaTeX ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// ━━━ KaTeX ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 function doMath(el){
   function attempt(){
     if(window.renderMathInElement){
@@ -650,29 +771,25 @@ function doMath(el){
         ],
         throwOnError:false,
       });
-    } else {
-      setTimeout(attempt,100);
-    }
+    } else { setTimeout(attempt,80); }
   }
   attempt();
 }
 
-// ━━━ Toast ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// ━━━ Toast ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 function toast(msg,dur=2500){
   const t=document.getElementById('toast');
   t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),dur);
 }
 
-// ━━━ Init ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// ━━━ Init ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 async function init(){
-  await openDB();
-  await syncRemoteCards();
   await renderDash();
   if('serviceWorker' in navigator)
     navigator.serviceWorker.register('/sw.js').catch(()=>{});
 }
-window.addEventListener('DOMContentLoaded',init);
+document.addEventListener('DOMContentLoaded',init);
 </script>
 </body>
 </html>
