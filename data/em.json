@@ -84,5 +84,46 @@
       "第2章"
     ],
     "created": "2026-03-30"
+  },
+  {
+    "id": "20260330-em-003",
+    "subject": "电磁波与电磁场",
+    "type": "example",
+    "title": "平行双导线单位长度电容",
+    "question": "两半径为 $R$ 的平行长直导线，中心间距为 $d$，且 $d\\gg R$，求单位长度电容 $C_1$。",
+    "image": "20260330-em-003.jpg",
+    "steps": [
+      {
+        "key": true,
+        "content": "**设电荷叠加电场**：正线带 $+\\lambda$，负线带 $-\\lambda$，$d\\gg R$ 时可视为线电荷。连线上 $x$ 处合场强：$E(x)=\\dfrac{\\lambda}{2\\pi\\varepsilon_0 x}+\\dfrac{\\lambda}{2\\pi\\varepsilon_0(d-x)}$"
+      },
+      {
+        "key": true,
+        "content": "**积分求电势差**：$U=\\dfrac{\\lambda}{2\\pi\\varepsilon_0}\\displaystyle\\int_R^{d-R}\\!\\left(\\dfrac{1}{x}+\\dfrac{1}{d-x}\\right)dx = \\dfrac{\\lambda}{\\pi\\varepsilon_0}\\ln\\dfrac{d-R}{R}\\approx\\dfrac{\\lambda}{\\pi\\varepsilon_0}\\ln\\dfrac{d}{R}$"
+      },
+      {
+        "key": false,
+        "content": "**积分计算细节**：$\\int\\!\\dfrac{dx}{x}=\\ln x$，$\\int\\!\\dfrac{dx}{d-x}=-\\ln(d-x)$，代入上下限后两段对称，结果翻倍得 $2\\ln\\dfrac{d-R}{R}$。"
+      },
+      {
+        "key": false,
+        "content": "**近似条件**：$d\\gg R$ 时 $d-R\\approx d$，化简为 $\\ln(d/R)$。"
+      },
+      {
+        "key": true,
+        "content": "**得单位长度电容**：$C_1=\\dfrac{\\lambda}{U}=\\dfrac{\\pi\\varepsilon_0}{\\ln(d/R)}$"
+      }
+    ],
+    "conclusion": "两步走：叠加两线电场 → 沿连线积分得 $U=\\dfrac{\\lambda}{\\pi\\varepsilon_0}\\ln\\dfrac{d}{R}$，再由 $C_1=\\lambda/U$ 得 $\\dfrac{\\pi\\varepsilon_0}{\\ln(d/R)}$。",
+    "tags": [
+      "电容",
+      "平行双导线",
+      "电势差",
+      "叠加原理",
+      "高斯定理",
+      "近似",
+      "第2章"
+    ],
+    "created": "2026-03-30"
   }
 ]
