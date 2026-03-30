@@ -37,7 +37,52 @@
       }
     ],
     "conclusion": "介质外区域用 $\\varepsilon_0$ 而非 $\\varepsilon$；内表面无极化面电荷是因为内腔处 $\\mathbf{E}=0$。",
-    "tags": ["高斯定理", "介质球", "极化电荷", "电位移矢量"],
+    "tags": [
+      "高斯定理",
+      "介质球",
+      "极化电荷",
+      "电位移矢量"
+    ],
     "created": "2026-03-24"
+  },
+  {
+    "id": "20260330-em-002",
+    "subject": "电磁波与电磁场",
+    "type": "example",
+    "title": "无限长导线电场公式推导",
+    "question": "利用高斯定理推导无限长均匀带电直导线（线电荷密度 $\\lambda$）周围距轴线 $r$ 处的电场强度公式。",
+    "image": null,
+    "steps": [
+      {
+        "key": true,
+        "content": "**利用轴对称性**：选同轴圆柱面为高斯面（半径 $r$，长度 $L$），$\\vec{E}$ 处处沿径向且大小相等。"
+      },
+      {
+        "key": true,
+        "content": "**应用高斯定理** $\\oint \\vec{E}\\cdot d\\vec{A} = \\dfrac{Q_{enc}}{\\varepsilon_0}$：端面贡献为零（$\\vec{E}\\perp d\\vec{A}$），侧面给出 $E\\cdot 2\\pi r L$；包围电荷 $Q_{enc}=\\lambda L$。"
+      },
+      {
+        "key": false,
+        "content": "**端面为零的原因**：上下圆面的面法向量沿轴向，而电场完全径向，两者垂直，点积为 0。"
+      },
+      {
+        "key": false,
+        "content": "**联立求解**：$E\\cdot 2\\pi r L = \\dfrac{\\lambda L}{\\varepsilon_0}$，$L$ 约去，得 $E = \\dfrac{\\lambda}{2\\pi\\varepsilon_0 r}$。"
+      },
+      {
+        "key": false,
+        "content": "**方向**：$\\lambda>0$ 时电场朝外（离轴），$\\lambda<0$ 时朝内（向轴）。"
+      }
+    ],
+    "conclusion": "选轴对称高斯面 → 端面贡献为零 → 侧面积分 $E\\cdot 2\\pi rL$ = 包围电荷$/\\varepsilon_0$，$L$ 消掉得 $E=\\dfrac{\\lambda}{2\\pi\\varepsilon_0 r}$。",
+    "tags": [
+      "高斯定理",
+      "轴对称",
+      "无限长导线",
+      "电场强度",
+      "线电荷密度",
+      "第2章"
+    ],
+    "created": "2026-03-30"
   }
 ]
