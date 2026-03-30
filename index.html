@@ -34,6 +34,7 @@
 .s-sig  { --sc:#2471a3; --sl2:#eaf3fb; --sb2:#b8d4ea; }
 .s-cpx  { --sc:#1e8449; --sl2:#eafaf1; --sb2:#b8e4c8; }
 .s-emb  { --sc:#7d3c98; --sl2:#f5eafb; --sb2:#d8b8e8; }
+.s-it   { --sc:#b7770d; --sl2:#fdf6e3; --sb2:#f0d9a0; }
 .s-def  { --sc:#6b6456; --sl2:#f0ebe0; --sb2:#c8c0b0; }
 
 html,body{
@@ -524,10 +525,11 @@ html,body{
 <script>
 // ━━━ Subject config ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 const SUBJECTS = [
-  { name:'电磁波与电磁场', file:'em.json',       cls:'s-em',  code:'em'  },
-  { name:'信号与系统',     file:'signals.json',  cls:'s-sig', code:'sig' },
-  { name:'复变函数',       file:'complex.json',  cls:'s-cpx', code:'cpx' },
-  { name:'嵌入式系统',     file:'embedded.json', cls:'s-emb', code:'emb' },
+  { name:'电磁波与电磁场', file:'em.json',          cls:'s-em',  code:'em'  },
+  { name:'信号与系统',     file:'signals.json',     cls:'s-sig', code:'sig' },
+  { name:'复变函数',       file:'complex.json',     cls:'s-cpx', code:'cpx' },
+  { name:'嵌入式系统',     file:'embedded.json',    cls:'s-emb', code:'emb' },
+  { name:'信息论',         file:'info_theory.json', cls:'s-it',  code:'it'  },
 ];
 function subjCls(name){
   return SUBJECTS.find(s=>s.name===name)?.cls || 's-def';
