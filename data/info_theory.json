@@ -82,5 +82,44 @@
       "例题2-9"
     ],
     "created": "2026-03-30"
+  },
+  {
+    "id": "20260420-it-003",
+    "subject": "信息论",
+    "type": "example",
+    "title": "准对称DMC信道容量（BEC推广）",
+    "question": "已知准对称离散无记忆信道，转移概率矩阵 $P=\\begin{pmatrix}1-\\varepsilon_1-\\varepsilon_2 & \\varepsilon_2 & \\varepsilon_1 \\\\ \\varepsilon_2 & 1-\\varepsilon_1-\\varepsilon_2 & \\varepsilon_1\\end{pmatrix}$（二元对称删除信道，BEC推广模型）。求信道容量 $C$。",
+    "image": "20260420-it-003.jpg",
+    "steps": [
+      {
+        "key": true,
+        "content": "准对称信道容量公式：$C = \\max_{p(x_i)} H(Y) - H(Y|X)$，其中 $H(Y|X)$ 与输入分布无关，直接由行计算"
+      },
+      {
+        "key": true,
+        "content": "当输入等概率（$p(x_0)=p(x_1)=\\frac{1}{2}$）时 $H(Y)$ 取最大值，此时输出各符号等概：$p(y_0)=p(y_1)=\\frac{1-\\varepsilon_1}{2}$，$p(E)=\\varepsilon_2$（删除符号）"
+      },
+      {
+        "key": false,
+        "content": "计算 $H(Y)$：$H\\!\\left(\\frac{1-\\varepsilon_1}{2},\\,\\frac{1-\\varepsilon_1}{2},\\,\\varepsilon_2\\right)$（三元熵，$\\varepsilon_1$ 对应错误，$\\varepsilon_2$ 对应删除）"
+      },
+      {
+        "key": false,
+        "content": "计算 $H(Y|X)$：取转移矩阵任意一行，$H(Y|X)=H(1-\\varepsilon_1-\\varepsilon_2,\\,\\varepsilon_1,\\,\\varepsilon_2)$（行熵，准对称信道各行相同）"
+      },
+      {
+        "key": false,
+        "content": "代入得 $C = H\\!\\left(\\frac{1-\\varepsilon_1}{2},\\frac{1-\\varepsilon_1}{2},\\varepsilon_2\\right) - H(1-\\varepsilon_1-\\varepsilon_2,\\,\\varepsilon_1,\\,\\varepsilon_2)$"
+      }
+    ],
+    "conclusion": "$C = H\\!\\left(\\frac{1-\\varepsilon_1}{2},\\frac{1-\\varepsilon_1}{2},\\varepsilon_2\\right) - H(1-\\varepsilon_1-\\varepsilon_2,\\varepsilon_1,\\varepsilon_2)$。准对称信道：$H(Y|X)$ 与输入无关，达容量时输入等概。",
+    "tags": [
+      "准对称信道",
+      "BEC",
+      "信道容量",
+      "删除信道",
+      "互信息"
+    ],
+    "created": "2026-04-20"
   }
 ]
