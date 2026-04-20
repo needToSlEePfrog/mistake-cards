@@ -125,5 +125,39 @@
       "第2章"
     ],
     "created": "2026-03-30"
+  },
+  {
+    "id": "20260420-em-004",
+    "subject": "电磁波与电磁场",
+    "type": "example",
+    "title": "由∇·B=0求参数m与J",
+    "question": "已知磁感应强度 $\\vec{B} = x\\vec{e}_x + my\\vec{e}_y$，在无源区域（$\\rho=0$）中，求参数 $m$ 以及该区域的电流密度 $\\vec{J}$。",
+    "image": "20260420-em-004.jpg",
+    "steps": [
+      {
+        "key": true,
+        "content": "磁场必须满足 $\\nabla \\cdot \\vec{B} = 0$，代入分量：$\\frac{\\partial x}{\\partial x} + \\frac{\\partial (my)}{\\partial y} = 1 + m = 0$，故 $m = -1$"
+      },
+      {
+        "key": true,
+        "content": "由安培定律微分形式 $\\nabla \\times \\vec{B} = \\mu_0 \\vec{J}$，计算旋度：$\\vec{B} = x\\vec{e}_x - y\\vec{e}_y$，所有偏导交叉项均为零，故 $\\nabla \\times \\vec{B} = \\vec{0}$"
+      },
+      {
+        "key": false,
+        "content": "旋度行列式展开：$e_z$ 分量 $= \\frac{\\partial(-y)}{\\partial x} - \\frac{\\partial x}{\\partial y} = 0 - 0 = 0$；$e_x, e_y$ 分量因 $B_z=0$ 且无 $z$ 依赖也均为零"
+      },
+      {
+        "key": false,
+        "content": "$\\vec{J} = \\frac{1}{\\mu_0}\\nabla \\times \\vec{B} = \\vec{0}$，即该区域无传导电流"
+      }
+    ],
+    "conclusion": "$\\nabla \\cdot \\vec{B}=0$ 定参数，$\\nabla \\times \\vec{B} = \\mu_0\\vec{J}$ 求电流密度——磁场两大基本方程的直接应用。",
+    "tags": [
+      "散度",
+      "旋度",
+      "磁场基本方程",
+      "安培定律"
+    ],
+    "created": "2026-04-20"
   }
 ]
