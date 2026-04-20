@@ -121,5 +121,44 @@
       "互信息"
     ],
     "created": "2026-04-20"
+  },
+  {
+    "id": "20260420-it-004",
+    "subject": "信息论",
+    "type": "example",
+    "title": "准对称DMC：二元对称删除信道容量",
+    "question": "信道转移矩阵 $P=\\begin{pmatrix}1-\\varepsilon_1-\\varepsilon_2 & \\varepsilon_2 & \\varepsilon_1 \\\\ \\varepsilon_2 & 1-\\varepsilon_1-\\varepsilon_2 & \\varepsilon_1\\end{pmatrix}$（二元输入，三元输出：$y_0, E, y_1$），求信道容量 $C$。例：$P=\\begin{pmatrix}0.5&0.3&0.2\\\\0.3&0.5&0.2\\end{pmatrix}$，即 $\\varepsilon_1=0.3,\\,\\varepsilon_2=0.2$。",
+    "image": "20260420-it-004.jpg",
+    "steps": [
+      {
+        "key": true,
+        "content": "此信道为**准对称信道**（各行是同一集合的置换），最优输入为均匀分布 $p(x_0)=p(x_1)=\\frac{1}{2}$"
+      },
+      {
+        "key": true,
+        "content": "均匀输入下输出分布：$P(y_0)=P(E)=\\frac{1-\\varepsilon_1}{2}$，$P(y_1)=\\varepsilon_1$，故 $H(Y)=H\\!\\left(\\frac{1-\\varepsilon_1}{2},\\,\\frac{1-\\varepsilon_1}{2},\\,\\varepsilon_1\\right)$"
+      },
+      {
+        "key": false,
+        "content": "验证 $P(y_0)$：$\\frac{1}{2}(1-\\varepsilon_1-\\varepsilon_2)+\\frac{1}{2}\\varepsilon_2=\\frac{1-\\varepsilon_1}{2}$；$P(E)=\\frac{1}{2}\\varepsilon_2+\\frac{1}{2}(1-\\varepsilon_1-\\varepsilon_2)=\\frac{1-\\varepsilon_1}{2}$；$P(y_1)=\\frac{\\varepsilon_1}{2}+\\frac{\\varepsilon_1}{2}=\\varepsilon_1$"
+      },
+      {
+        "key": false,
+        "content": "$H(Y|X)$ 等于转移矩阵任意一行的熵（各行相同）：$H(Y|X)=H(1-\\varepsilon_1-\\varepsilon_2,\\,\\varepsilon_2,\\,\\varepsilon_1)$"
+      },
+      {
+        "key": false,
+        "content": "代入例题：$\\varepsilon_1=0.3,\\,\\varepsilon_2=0.2$，$H(Y)=H(0.35,0.35,0.3)$，$H(Y|X)=H(0.5,0.2,0.3)$，$C=H(Y)-H(Y|X)$"
+      }
+    ],
+    "conclusion": "$C = H\\!\\left(\\frac{1-\\varepsilon_1}{2},\\frac{1-\\varepsilon_1}{2},\\varepsilon_1\\right) - H(1-\\varepsilon_1-\\varepsilon_2,\\,\\varepsilon_2,\\,\\varepsilon_1)$；准对称信道最优输入均匀，$H(Y|X)$ 直接读行熵。",
+    "tags": [
+      "准对称信道",
+      "BEC",
+      "信道容量",
+      "均匀分布",
+      "删除信道"
+    ],
+    "created": "2026-04-20"
   }
 ]
