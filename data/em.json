@@ -170,26 +170,26 @@
     "steps": [
       {
         "key": true,
-        "content": "用安培环路定理 $\\oint \\vec{H}\\cdot d\\vec{l}=\\sum I$，取半径为 $r$ 的同心圆环路，利用轴对称性化简为 $H\\cdot 2\\pi r = \\sum I$"
+        "content": "用安培环路定理 $\\oint \\vec{H}\\cdot d\\vec{l}=\\sum I$，取半径为 $r$ 的同心圆环路，轴对称性化简为 $H\\cdot 2\\pi r = \\sum I$"
       },
       {
         "key": true,
-        "content": "三个区域分别计算包围净电流：$r<a$：$\\sum I=\\frac{Ir^2}{a^2}$；$a<r\\leq b$：$\\sum I=I$；$r>b$：$\\sum I=I+(-I)=0$"
+        "content": "三区域净电流：$r \\lt a$：$\\sum I=\\frac{Ir^2}{a^2}$；$a \\lt r \\leq b$：$\\sum I=I$；$r \\gt b$：$\\sum I=0$"
       },
       {
         "key": false,
-        "content": "$r<a$（内导体内部）：$J=\\frac{I}{\\pi a^2}$，包围电流 $=J\\pi r^2=\\frac{Ir^2}{a^2}$，故 $H_2=\\frac{Ir}{2\\pi a^2}$"
+        "content": "$r \\lt a$（内导体内部）：电流密度 $J=\\frac{I}{\\pi a^2}$，包围电流 $=J\\pi r^2=\\frac{Ir^2}{a^2}$，故 $H_2=\\frac{Ir}{2\\pi a^2}$"
       },
       {
         "key": false,
-        "content": "$a<r\\leq b$（两导体之间）：只包围内导体全部电流 $I$，故 $H_1=\\frac{I}{2\\pi r}$"
+        "content": "$a \\lt r \\leq b$（两导体之间）：只包围内导体全部电流 $I$，故 $H_1=\\frac{I}{2\\pi r}$"
       },
       {
         "key": false,
-        "content": "$r>b$（外导体外部）：内外导体电流大小相等方向相反，净电流为零，故 $H=0$"
+        "content": "$r \\gt b$（外导体外部）：内外导体电流抵消，净电流为零，故 $H=0$"
       }
     ],
-    "conclusion": "$$\\vec{H}=\\begin{cases}\\dfrac{Ir}{2\\pi a^2}\\vec{e}_\\phi, & r<a\\\\[4pt]\\dfrac{I}{2\\pi r}\\vec{e}_\\phi, & a<r\\leq b\\\\[4pt]\\vec{0}, & r>b\\end{cases}$$\n外部磁场为零是同轴电缆屏蔽性能的物理来源。",
+    "conclusion": "$r \\lt a$：$H=\\frac{Ir}{2\\pi a^2}$；$a \\lt r \\leq b$：$H=\\frac{I}{2\\pi r}$；$r \\gt b$：$H=0$。外部磁场为零是同轴电缆屏蔽性能的物理来源。",
     "tags": [
       "安培环路定理",
       "同轴电缆",
