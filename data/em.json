@@ -159,5 +159,43 @@
       "安培定律"
     ],
     "created": "2026-04-20"
+  },
+  {
+    "id": "20260420-em-005",
+    "subject": "电磁波与电磁场",
+    "type": "example",
+    "title": "同轴电缆各区域磁场H分布",
+    "question": "同轴电缆：内导体半径 $a$，通电流 $+I$（向上）；外导体内半径 $a$、外半径 $b$，通电流 $-I$（向下），电流均匀分布。求各区域磁场强度 $\\vec{H}$。",
+    "image": "20260420-em-005.jpg",
+    "steps": [
+      {
+        "key": true,
+        "content": "用安培环路定理 $\\oint \\vec{H}\\cdot d\\vec{l}=\\sum I$，取半径为 $r$ 的同心圆环路，利用轴对称性化简为 $H\\cdot 2\\pi r = \\sum I$"
+      },
+      {
+        "key": true,
+        "content": "三个区域分别计算包围净电流：$r<a$：$\\sum I=\\frac{Ir^2}{a^2}$；$a<r\\leq b$：$\\sum I=I$；$r>b$：$\\sum I=I+(-I)=0$"
+      },
+      {
+        "key": false,
+        "content": "$r<a$（内导体内部）：$J=\\frac{I}{\\pi a^2}$，包围电流 $=J\\pi r^2=\\frac{Ir^2}{a^2}$，故 $H_2=\\frac{Ir}{2\\pi a^2}$"
+      },
+      {
+        "key": false,
+        "content": "$a<r\\leq b$（两导体之间）：只包围内导体全部电流 $I$，故 $H_1=\\frac{I}{2\\pi r}$"
+      },
+      {
+        "key": false,
+        "content": "$r>b$（外导体外部）：内外导体电流大小相等方向相反，净电流为零，故 $H=0$"
+      }
+    ],
+    "conclusion": "$$\\vec{H}=\\begin{cases}\\dfrac{Ir}{2\\pi a^2}\\vec{e}_\\phi, & r<a\\\\[4pt]\\dfrac{I}{2\\pi r}\\vec{e}_\\phi, & a<r\\leq b\\\\[4pt]\\vec{0}, & r>b\\end{cases}$$\n外部磁场为零是同轴电缆屏蔽性能的物理来源。",
+    "tags": [
+      "安培环路定理",
+      "同轴电缆",
+      "轴对称",
+      "分区域"
+    ],
+    "created": "2026-04-20"
   }
 ]
