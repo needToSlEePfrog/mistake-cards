@@ -1,1 +1,42 @@
-[]
+[
+  {
+    "id": "20260426-cpx-001",
+    "subject": "复变函数",
+    "type": "example",
+    "title": "柯西积分公式框架",
+    "question": "如何判断并计算 $\\oint_C f(z)\\,\\mathrm{d}z$？",
+    "image": null,
+    "steps": [
+      { "key": true,  "content": "**第一步：找奇点**，令分母为零，解出所有 $z_0$" },
+      { "key": true,  "content": "**第二步：判断位置**，计算 $|z_0 - \\text{圆心}|$ 与半径比较" },
+      { "key": true,  "content": "**0个在内** → $\\oint = 0$（Cauchy定理）" },
+      { "key": true,  "content": "**1个在内，分母$(z-z_0)$** → $\\oint_C \\dfrac{f(z)}{z-z_0}\\mathrm{d}z = 2\\pi i\\cdot f(z_0)$" },
+      { "key": true,  "content": "**1个在内，分母$(z-z_0)^{n+1}$** → $\\oint_C \\dfrac{f(z)}{(z-z_0)^{n+1}}\\mathrm{d}z = \\dfrac{2\\pi i}{n!}f^{(n)}(z_0)$" },
+      { "key": true,  "content": "**≥2个在内** → 复合闭路定理：$\\oint_{\\text{大圈}} = \\oint_{C_1} + \\oint_{C_2} + \\cdots$，每个小圈只包围一个奇点，分别用柯西公式再相加" },
+      { "key": false, "content": "注意分母有常数系数时先提出：$(2z+1) = 2\\left(z+\\dfrac{1}{2}\\right)$，奇点是 $z=-\\dfrac{1}{2}$" },
+      { "key": false, "content": "奇点在圆上：题目不会出现此情形" }
+    ],
+    "conclusion": "先找奇点，再判断位置，0个→0，1个→柯西公式，≥2个→拆小圈",
+    "tags": ["柯西积分公式", "复合闭路定理", "高阶导数公式"],
+    "created": "2026-04-26"
+  },
+  {
+    "id": "20260426-cpx-002",
+    "subject": "复变函数",
+    "type": "example",
+    "title": "幂级数展开框架",
+    "question": "如何将函数在 $z=a$ 处展开成幂级数？",
+    "image": null,
+    "steps": [
+      { "key": true,  "content": "**三个基础公式**（只需记这一个，其余从它推）：$$\\frac{1}{1-u}=\\sum_{n=0}^{\\infty}u^n,\\quad e^u=\\sum_{n=0}^{\\infty}\\frac{u^n}{n!},\\quad \\sin/\\cos \\text{ 各自展开}$$" },
+      { "key": true,  "content": "**Taylor展开流程**：令 $w=z-a$ → 提公因子凑公式 → 确认 $|u|<1$ → 换回 $z-a$" },
+      { "key": true,  "content": "**Laurent展开**（展开点是奇点）：换元 → 部分分式 → $\\dfrac{1}{w^n}$ 直接保留，其余凑公式展开 → 合并" },
+      { "key": false, "content": "从公式1推变形：$\\dfrac{1}{1+u}$换$u\\to-u$；$\\dfrac{1}{(1-u)^2}$求导一次；$\\dfrac{1}{(1+u)^2}$换$u\\to-u$再求导乘$-1$；$\\dfrac{1}{(1-u)^3}$求导两次除以2" },
+      { "key": false, "content": "范围决定展开方向：$|w|<R$ 时令 $u=\\dfrac{w}{R}$；$|w|>R$ 时提 $\\dfrac{1}{w}$ 令 $u=\\dfrac{R}{w}$" },
+      { "key": false, "content": "**收敛半径** $R$ = 展开点到最近奇点的距离；$e^z,\\sin z,\\cos z$ 无奇点故 $R=+\\infty$" }
+    ],
+    "conclusion": "记一个公式 $\\frac{1}{1-u}=\\sum u^n$，换元凑形式，其余全部推导",
+    "tags": ["幂级数", "Taylor展开", "Laurent展开", "收敛半径"],
+    "created": "2026-04-26"
+  }
+]
