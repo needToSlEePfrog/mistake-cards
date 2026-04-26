@@ -3,21 +3,21 @@
     "id": "20260426-cpx-001",
     "subject": "复变函数",
     "type": "example",
-    "title": "柯西积分公式框架",
-    "question": "如何判断并计算 $\\oint_C f(z)\\,\\mathrm{d}z$？",
-    "image": null,
+    "title": "柯西积分公式完整框架",
+    "question": "如何判断并计算 $\\oint_C \\dfrac{f(z)}{z-z_0}\\,\\mathrm{d}z$？包含所有奇点情形。",
+    "image": "20260426-cpx-001.jpg",
     "steps": [
-      { "key": true,  "content": "**第一步：找奇点**，令分母为零，解出所有 $z_0$" },
-      { "key": true,  "content": "**第二步：判断位置**，计算 $|z_0 - \\text{圆心}|$ 与半径比较" },
-      { "key": true,  "content": "**0个在内** → $\\oint = 0$（Cauchy定理）" },
-      { "key": true,  "content": "**1个在内，分母$(z-z_0)$** → $\\oint_C \\dfrac{f(z)}{z-z_0}\\mathrm{d}z = 2\\pi i\\cdot f(z_0)$" },
-      { "key": true,  "content": "**1个在内，分母$(z-z_0)^{n+1}$** → $\\oint_C \\dfrac{f(z)}{(z-z_0)^{n+1}}\\mathrm{d}z = \\dfrac{2\\pi i}{n!}f^{(n)}(z_0)$" },
-      { "key": true,  "content": "**≥2个在内** → 复合闭路定理：$\\oint_{\\text{大圈}} = \\oint_{C_1} + \\oint_{C_2} + \\cdots$，每个小圈只包围一个奇点，分别用柯西公式再相加" },
-      { "key": false, "content": "注意分母有常数系数时先提出：$(2z+1) = 2\\left(z+\\dfrac{1}{2}\\right)$，奇点是 $z=-\\dfrac{1}{2}$" },
-      { "key": false, "content": "奇点在圆上：题目不会出现此情形" }
+      { "key": true,  "content": "**公式**：$\\oint_C \\dfrac{f(z)}{z-z_0}\\,\\mathrm{d}z = 2\\pi i\\, f(z_0)$，条件：$f(z)$ 在 $C$ 上及内部解析，$z_0$ 在 $C$ 内部" },
+      { "key": true,  "content": "**情形判断**：① 0个奇点在内 → $= 0$；② 1个在内1个在外 → 直接柯西公式；③ 均在外 → $= 0$；④ 均在内 → 复合闭路定理 $\\oint_C = \\oint_{C_1} + \\oint_{C_2}$" },
+      { "key": true,  "content": "**步骤**：将被积函数凑成 $\\dfrac{f(z)}{z-z_0}$ 形式，直接写出 $2\\pi i\\, f(z_0)$" },
+      { "key": false, "content": "**例①** $\\oint_C \\dfrac{e^z}{z-1}\\,\\mathrm{d}z$，$C:|z|=2$：奇点 $z=1$，$|1|=1<2$ 在内，$f(z)=e^z$，$z_0=1$，结果 $= 2\\pi i\\,e$" },
+      { "key": false, "content": "**例②一内一外** $\\oint_C \\dfrac{e^z}{(z-1)(z-3)}\\,\\mathrm{d}z$，$C:|z|=2$：$z_1=1$ 在内，$z_2=3$ 在外，凑 $f(z)=\\dfrac{e^z}{z-3}$，$z_0=1$，结果 $= 2\\pi i\\cdot\\dfrac{e}{1-3} = -\\pi ie$" },
+      { "key": false, "content": "**例③均在内** $\\oint_C \\dfrac{e^z}{(z-1)(z-3)}\\,\\mathrm{d}z$，$C:|z|=4$：拆 $C_1$（包围 $z_1=1$）、$C_2$（包围 $z_2=3$），$\\oint_{C_1}=-\\pi ie$，$\\oint_{C_2}=\\pi ie^3$，总和 $=\\pi i(e^3-e)$" },
+      { "key": false, "content": "**注意** 分母有常数系数时先提出：$(2z+1)=2\\!\\left(z+\\dfrac{1}{2}\\right)$，奇点是 $z=-\\dfrac{1}{2}$，提出的 $\\dfrac{1}{2}$ 留在外面" },
+      { "key": false, "content": "**高阶导数公式**：分母是 $(z-z_0)^{n+1}$ 时，$\\oint_C \\dfrac{f(z)}{(z-z_0)^{n+1}}\\,\\mathrm{d}z = \\dfrac{2\\pi i}{n!}f^{(n)}(z_0)$" }
     ],
-    "conclusion": "先找奇点，再判断位置，0个→0，1个→柯西公式，≥2个→拆小圈",
-    "tags": ["柯西积分公式", "复合闭路定理", "高阶导数公式"],
+    "conclusion": "先找奇点判断位置：0个或均在外→0，1个在内→柯西公式，≥2个在内→拆小圈分别算再相加",
+    "tags": ["柯西积分公式", "复合闭路定理", "高阶导数公式", "奇点"],
     "created": "2026-04-26"
   },
   {
@@ -28,14 +28,15 @@
     "question": "如何将函数在 $z=a$ 处展开成幂级数？",
     "image": null,
     "steps": [
-      { "key": true,  "content": "**三个基础公式**（只需记这一个，其余从它推）：$$\\frac{1}{1-u}=\\sum_{n=0}^{\\infty}u^n,\\quad e^u=\\sum_{n=0}^{\\infty}\\frac{u^n}{n!},\\quad \\sin/\\cos \\text{ 各自展开}$$" },
-      { "key": true,  "content": "**Taylor展开流程**：令 $w=z-a$ → 提公因子凑公式 → 确认 $|u|<1$ → 换回 $z-a$" },
-      { "key": true,  "content": "**Laurent展开**（展开点是奇点）：换元 → 部分分式 → $\\dfrac{1}{w^n}$ 直接保留，其余凑公式展开 → 合并" },
-      { "key": false, "content": "从公式1推变形：$\\dfrac{1}{1+u}$换$u\\to-u$；$\\dfrac{1}{(1-u)^2}$求导一次；$\\dfrac{1}{(1+u)^2}$换$u\\to-u$再求导乘$-1$；$\\dfrac{1}{(1-u)^3}$求导两次除以2" },
-      { "key": false, "content": "范围决定展开方向：$|w|<R$ 时令 $u=\\dfrac{w}{R}$；$|w|>R$ 时提 $\\dfrac{1}{w}$ 令 $u=\\dfrac{R}{w}$" },
-      { "key": false, "content": "**收敛半径** $R$ = 展开点到最近奇点的距离；$e^z,\\sin z,\\cos z$ 无奇点故 $R=+\\infty$" }
+      { "key": true,  "content": "**唯一需要记的公式**：$\\dfrac{1}{1-u}=\\sum_{n=0}^{\\infty}u^n$，$|u|<1$；其余从它推导" },
+      { "key": true,  "content": "**Taylor展开流程**：令 $w=z-a$ → 提公因子凑成公式形式 → 确认 $|u|<1$ → 展开 → 换回 $z-a$" },
+      { "key": true,  "content": "**Laurent展开**（展开点是奇点，范围含 $0<|z-a|$）：换元 → 部分分式 → $\\dfrac{1}{w^n}$ 直接保留，其余凑公式展开 → 合并" },
+      { "key": false, "content": "**从公式1推变形**：$\\dfrac{1}{1+u}$：换 $u\\to-u$；$\\dfrac{1}{(1-u)^2}$：求导一次得 $\\sum(n+1)u^n$；$\\dfrac{1}{(1+u)^2}$：换$u\\to-u$再求导乘$-1$得 $\\sum(-1)^n(n+1)u^n$；$\\dfrac{1}{(1-u)^3}$：再求导除以2" },
+      { "key": false, "content": "**范围决定展开方向**：$|w|<R$ → 令 $u=\\dfrac{w}{R}$；$|w|>R$ → 提 $\\dfrac{1}{w}$，令 $u=\\dfrac{R}{w}$" },
+      { "key": false, "content": "**收敛半径** $R$ = 展开点到最近奇点的距离；$e^z,\\sin z,\\cos z$ 无奇点故 $R=+\\infty$" },
+      { "key": false, "content": "**最简形式判断**：换元后分母只剩 $w$ 自己（如 $\\dfrac{1}{w}$，$\\dfrac{1}{w^2}$）→ 直接保留；分母含 $(w\\pm a)$ → 必须展开" }
     ],
-    "conclusion": "记一个公式 $\\frac{1}{1-u}=\\sum u^n$，换元凑形式，其余全部推导",
+    "conclusion": "记一个公式 $\\frac{1}{1-u}=\\sum u^n$，换元凑形式，其余全部推导；Laurent展开多一步部分分式",
     "tags": ["幂级数", "Taylor展开", "Laurent展开", "收敛半径"],
     "created": "2026-04-26"
   }
